@@ -21,8 +21,6 @@ getFracs = function(filename, AAConvTable) {
 }
 
 
-#filename = "P02452.fasta.txt"
-
 
 AAFullNames = c("Alanine", "Arginine", "Asparagine", "Aspartic acid", "Cysteine", "Glutamine", "Glutamic acid", "Glycine", "Histidine", "Isoleucine",
               "Leucine", "Lysine", "Methionine", "Phenylalanine", "Proline", "Serine", "Threonine", "Tryptophan", "Tyrosine", "Valine")
@@ -33,6 +31,10 @@ AAConvTable = tibble(fullNames = AAFullNames, shortNames = AAShortNames, letters
 
 col1ChainAlpha1 = getFracs("P02452.fasta.txt", AAConvTable)
 col1ChainAlpha2 = getFracs("P08123.fasta.txt", AAConvTable)
+
+#test
+sum(col1ChainAlpha1$fraction) #1, ok
+sum(col1ChainAlpha2$fraction) #1, ok
 
 totCol1 = col1ChainAlpha1
 totCol1$fraction = (col1ChainAlpha1$fraction*2 + col1ChainAlpha2$fraction)/3

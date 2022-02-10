@@ -5,13 +5,13 @@ library(scales)
 library(ggplot2)
 library(ggpubr)
 
-data____path = "C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy/data/"
+data____path = "C:/Work/MatlabCode/projects/TMEModeling/TMEModeling/data/"
 fig___path = "Z:/projects/TMEModeling/figures/"
 
 metaboliteTable = readRDS(paste0(data____path, "metTable.RDS"))
 metaboliteSynonymes = readRDS(paste0(data____path, "metSynonyms.RDS"))
-metaboliteVals = readRDS(paste0(data____path, "metSynonyms.RDS"))
-metaboliteValRefs = readRDS(paste0(data____path, "metSynonyms.RDS"))
+metaboliteVals = readRDS(paste0(data____path, "metVals.RDS"))
+metaboliteValRefs = readRDS(paste0(data____path, "metRefs.RDS"))
 
 
 #make a more advanced calculation
