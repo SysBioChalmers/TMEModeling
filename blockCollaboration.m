@@ -1,4 +1,4 @@
-%Changes for example glucose[f_s] => glucose[s] to glucose[f_s] => 
+%Changes for example glucose[f_e] => glucose[e] to glucose[f_e] => 
 function outModel = blockCollaboration(inModel, metsToKeep)
 if nargin < 2
     metsToKeep = {};
@@ -8,8 +8,8 @@ outModel = inModel;
         %and imported to the cancer cells
         %first find the reactions exporting these metabolites:
         %find the S compartment mets (use the input model as template)
-sComp = find(strcmp(outModel.comps,'s'));
-sfComp = find(strcmp(outModel.comps,'f_s'));
+sComp = find(strcmp(outModel.comps,'e'));
+sfComp = find(strcmp(outModel.comps,'f_e'));
 sMetsSel = outModel.metComps == sComp;
 sfMetsSel = outModel.metComps == sfComp;
 %Filter out the mets to keep

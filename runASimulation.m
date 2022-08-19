@@ -17,6 +17,12 @@ res.resultSolutions = cell(nPoints,1);
 res.rxns = inModel.rxns;
 tic
 
+params = struct();
+params.relGap = 0.4;
+params.FeasibilityTol = 1e-9;
+params.OptimalityTol = 1e-9;
+
+
 for i = 1:nPoints
     disp(i)
 
@@ -31,5 +37,5 @@ for i = 1:nPoints
     if relaxOxygen
         modelGrowth.ub(strcmp(modelGrowth.rxns,'MAR09048_REV')) = Inf; %HMR_9048_REV oxygen exchange reaction
     end
-    res.resultSolutions{i} = solveLP(modelGrowth,1);
+    res.resultSolutions{i} = solveLP(modelGrowth,1,params);
 end

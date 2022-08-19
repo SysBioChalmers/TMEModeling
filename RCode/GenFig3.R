@@ -5,7 +5,7 @@ library(ggpubr)
 
 fig___path = "Z:/projects/TMEModeling/figures/"
 
-setwd("C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy")
+setwd("C:/Work/MatlabCode/projects/TMEModeling/TMEModeling")
 
 source("RCode/FigureHelpers.R")
 
@@ -77,7 +77,7 @@ pD
 
 collabMetsLog = rowSums(collaborationMets) > 0
 totNumCollabMets = sum(collabMetsLog)
-totNumCollabMets#233
+totNumCollabMets#229 - this number can vary slightly due to numerical instabilities
 
 #Export collaboration mets in a table, which is then imported to an excel sheet.
 #Metabolite a0 a1 a2 ... a60
@@ -209,12 +209,12 @@ pSE
 
 
 ggsave(
-  paste0(fig___path, "Fig3C.png"),
+  paste0(fig___path, "Fig3C.eps"),
   plot = pC,
   width = 5, height = 3.75, dpi = 300)
 
 ggsave(
-  paste0(fig___path, "Fig3D.png"),
+  paste0(fig___path, "Fig3D.eps"),
   plot = pD,
   width = 5, height = 3.75, dpi = 300)
 

@@ -5,7 +5,7 @@ library(ggpubr)
 
 fig___path = "Z:/projects/TMEModeling/figures/"
 
-setwd("C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy")
+setwd("C:/Work/MatlabCode/projects/TMEModeling/TMEModeling")
 
 source("RCode/FigureHelpers.R")
 
@@ -57,12 +57,12 @@ pD = plotFluxesGen(D1_3$D1.3, "Oxygen unconstrained",
 pD
 
 ggsave(
-  paste0(fig___path, "Fig1b.png"),
+  paste0(fig___path, "Fig1b.eps"),
   plot = pA,
   width = 5, height = 3.5, dpi = 300)
 
 ggsave(
-  paste0(fig___path, "Fig1c.png"),
+  paste0(fig___path, "Fig1c.eps"),
   plot = pB,
   width = 5, height = 3.5, dpi = 300)
 
@@ -225,7 +225,7 @@ p2A = plotFluxesGenSigned(D1_1$D1.1, "",
 p2A
 
 #the amino acids with low fluxes and that are not proportional to growth
-p3B = plotFluxesGenSigned(D1_1$D1.1, "", 
+p2B = plotFluxesGenSigned(D1_1$D1.1, "", 
                           list("MAR09066","MAR09062",  "MAR09065", "MAR09071",  "MAR09038", "MAR09046"),
                           c(   "arginine","asparagine","cysteine", "glutamate", "histidine","valine"), 
                           FALSE, 
@@ -234,12 +234,12 @@ p3B = plotFluxesGenSigned(D1_1$D1.1, "",
                           fluxScaling = c(1,1,1,1,1,1),
                           lineSizes = c(1,1,1,1,1,1),
                           hideBiomassUnit = TRUE)
-p3B
+p2B
 
 
 
 #the rest of the amino acids (proportional to growth)
-p3Sup = plotFluxesGenSigned(D1_1$D1.1, "", 
+p2Sup = plotFluxesGenSigned(D1_1$D1.1, "", 
                           list("MAR09061","MAR09039",  "MAR09040","MAR09041","MAR09042",  "MAR09043",     "MAR09045",  "MAR09064"),
                           c(   "alanine", "isoleucine","leucine", "lysine",  "methionine","phenylalanine","tryptophan","tyrosine"), 
                           FALSE, 
@@ -248,21 +248,21 @@ p3Sup = plotFluxesGenSigned(D1_1$D1.1, "",
                           fluxScaling = c(1,1,1,1,1,1,1,1),
                           lineSizes = c(1,1,1,1,1,1,1,1),
                           hideBiomassUnit = TRUE)
-p3Sup
+p2Sup
 
 ggsave(
-  paste0(fig___path, "Fig2A.png"),
+  paste0(fig___path, "Fig2A.eps"),
   plot = p2A,
   width = 5, height = 4, dpi = 300)
 
 ggsave(
-  paste0(fig___path, "Fig2B.png"),
-  plot = p3B,
+  paste0(fig___path, "Fig2B.eps"),
+  plot = p2B,
   width = 5, height = 4, dpi = 300)
 
 ggsave(
   paste0(fig___path, "Fig2Sup.png"),
-  plot = p3Sup,
+  plot = p2Sup,
   width = 5, height = 4, dpi = 300)
 
 ##############################################
@@ -355,4 +355,6 @@ ggsave(
   paste0(fig___path, "SupProline.png"),
   plot = pX,
   width = 5, height = 3.5, dpi = 300)
+
+
 

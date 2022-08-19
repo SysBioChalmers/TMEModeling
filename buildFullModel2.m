@@ -187,9 +187,9 @@ modelBackup = model2;
 model2 = modelBackup;
 
 %first ECM_protein_pool_biomass, i.e. the collagen biomass
-metsToAdd.mets = {'ECM_protein_pool_biomass', 'ECM_protein_pool_biomass_s'};
+metsToAdd.mets = {'ECM_protein_pool_biomass', 'ECM_protein_pool_biomass_e'};
 metsToAdd.metNames = {'ECM_protein_pool_biomass', 'ECM_protein_pool_biomass'};
-metsToAdd.compartments = {'f_c', 'f_s'};
+metsToAdd.compartments = {'f_c', 'f_e'};
 model2 = addMets(model2, metsToAdd, false);
 
 rxnsToAdd.rxns = {'ecm_protein_pool_biomass'};
@@ -197,7 +197,7 @@ rxnsToAdd.equations = {'0.0948 L-alanyl-tRNA(ala)[f_c] + 0.0499 L-arginyl-tRNA(a
 model2 = addRxns(model2,rxnsToAdd, 3);
 %and, export it out
 rxnsToAdd.rxns = {'ecm_protein_pool_biomass_transport'};
-rxnsToAdd.equations = {'ECM_protein_pool_biomass[f_c] => ECM_protein_pool_biomass[f_s]'};
+rxnsToAdd.equations = {'ECM_protein_pool_biomass[f_c] => ECM_protein_pool_biomass[f_e]'};
 model2 = addRxns(model2,rxnsToAdd, 3);
 
 %Now the GAGs
@@ -205,7 +205,7 @@ model2 = addRxns(model2,rxnsToAdd, 3);
 %structures, but only the xylose and attached heparan sulfate.
 %The metabolite to produce is heparan sulfate proteoglycan[s]
 %We should shut down possible production of this in other cell types, i.e.
-%set the flux (ub) from [g] and [o_g] to [s] to zero in t (HMR_7223). Also shut down 
+%set the flux (ub) from [g] and [o_g] to [e] to zero in t (HMR_7223). Also shut down 
 %degradation of it in the lysosome (HMR_7224).
 %To make this work, we also need to provide protein to attach the GAGs on.
 %We don't want to create the proteins, since that is accounted for in the 
@@ -228,15 +228,15 @@ model2.ub(strcmp(model2.rxns,'o_MAR07224')) = 0;
 
 model2.ub(strcmp(model2.rxns,'f_MAR07197')) = 0; %Make sure protein scaffold is not created inside the cell
 
-%add the protein scaffold in the [s] compartment
-metsToAdd.mets = {'gag_scaffold_protein_s'};
+%add the protein scaffold in the [e] compartment
+metsToAdd.mets = {'gag_scaffold_protein_e'};
 metsToAdd.metNames = {'[protein]-L-serine'};
-metsToAdd.compartments = {'f_s'};
+metsToAdd.compartments = {'f_e'};
 model2 = addMets(model2, metsToAdd, false);
 
 %and the import reactions
 rxnsToAdd.rxns = {'gag_scaffold_protein_import', 'gag_scaffold_protein_exchange'};
-rxnsToAdd.equations = {'[protein]-L-serine[f_s] => [protein]-L-serine[f_c]', '=> [protein]-L-serine[f_s]'};
+rxnsToAdd.equations = {'[protein]-L-serine[f_e] => [protein]-L-serine[f_c]', '=> [protein]-L-serine[f_e]'};
 model2 = addRxns(model2,rxnsToAdd, 3);
 
 %Now create an ECM biomass reaction containing both GAGs and protein
@@ -247,14 +247,14 @@ gagStoichiometry = fracGAGsInECM/gagBiomassMW*1000;
 
 metsToAdd.mets = {'ECM_biomass'};
 metsToAdd.metNames = {'ECM_biomass'};
-metsToAdd.compartments = {'f_s'};
+metsToAdd.compartments = {'f_e'};
 model2 = addMets(model2, metsToAdd, false);
 
-rxn = [num2str(protPoolStoichiometry), ' ECM_protein_pool_biomass[f_s] + ', ...
-       num2str(gagStoichiometry), ' heparan sulfate proteoglycan[f_s]', ...
-       ' => ECM_biomass[f_s]'];
-%rxn = [num2str(protPoolStoichiometry), ' ECM_protein_pool_biomass[s]', ...
-%       ' => ECM_biomass[s]'];
+rxn = [num2str(protPoolStoichiometry), ' ECM_protein_pool_biomass[f_e] + ', ...
+       num2str(gagStoichiometry), ' heparan sulfate proteoglycan[f_e]', ...
+       ' => ECM_biomass[f_e]'];
+%rxn = [num2str(protPoolStoichiometry), ' ECM_protein_pool_biomass[e]', ...
+%       ' => ECM_biomass[e]'];
    
 rxnsToAdd.rxns = {'ECM_biomass'};
 rxnsToAdd.equations = {rxn};
@@ -268,7 +268,7 @@ model2 = addRxns(model2,rxnsToAdd, 3);
 sc = fracECM/((1-fracECM)*fracC);
 
 rxn = ['biomass[c] + ', ...
-       num2str(sc), ' ECM_biomass[f_s]', ...
+       num2str(sc), ' ECM_biomass[f_e]', ...
        ' =>'];
 rxnsToAdd.rxns = {'total_biomass'};
 rxnsToAdd.equations = {rxn};

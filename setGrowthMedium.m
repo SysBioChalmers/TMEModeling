@@ -138,7 +138,7 @@ if startsWith(lower(medium), 'ham')
                 'gamma-tocopherol'};
 elseif strcmpi(medium, 'all')
     % open exchange of all metabolites
-    [~, comp_ind] = ismember('s', model.comps);
+    [~, comp_ind] = ismember('e', model.comps);
     mediaMets = unique(model.metNames(model.metComps == comp_ind));
 else
     error('MEDIUM option not recognized. Valid options are "Hams" or "All".');
@@ -195,7 +195,7 @@ else
     for i = 1:length(mediaMets)
         
         % get metabolite indx
-        metIndx = getIndexes(model, strcat(mediaMets{i},'[s]'), 'metcomps');
+        metIndx = getIndexes(model, strcat(mediaMets{i},'[e]'), 'metcomps');
         
         % get rxns for metabolite
         metRxns = find(model.S(metIndx,:));

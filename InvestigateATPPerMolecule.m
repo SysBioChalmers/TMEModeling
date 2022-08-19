@@ -1,4 +1,4 @@
-cd C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy %the folder with the functions
+cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
 
 %load the models
 load('data/ltModel.mat');
@@ -81,6 +81,39 @@ for i = 1:nsub
     resHypoxiaNoProdhNoO2(i) = -res.f;%ATP prod
     
 end
+
+mBase2 = convertToIrrev(ihuman);
+
+%test galactose, temp
+exchRxns2 = getExchangeRxns(mBase2, 'in');
+exchRxnsInd2 = ismember(mBase2.rxns, exchRxns2);
+mBase2.ub(exchRxnsInd2) = 0;
+
+%now, optimize for ATP, when supplying lactate and glutamine, with limited oxygen and see what it prefers!
+%I reason lactate is similar to glucose, except that we don't get any extra ATP from glycolysis, 
+%but redox should be similar.
+%mBase2.lb(strcmp(ltModel.rxns,'MAR03964')) = 0;%remove NGAM
+%mBase2.ub(length(mBase.ub)) = Inf; %disable enzyme constraints
+mBase2.ub(strcmp(mBase2.rxns, 'MAR09047_REV')) = Inf;%H2O
+mBase2.ub(strcmp(mBase2.rxns, 'MAR09072_REV')) = Inf;%Pi
+mBase2.ub(strcmp(mBase2.rxns, 'MAR09079_REV')) = Inf;%H+
+mBase2.ub(strcmp(mBase2.rxns, 'MAR09048_REV')) = 1;%oxygen
+mBase2.ub(strcmp(mBase2.rxns, 'MAR09034_REV')) = 0;%glucose
+mBase2.c = double(strcmp(mBase2.rxns,'MAR03964'));%set objective function to ATP consumption
+
+
+m = mBase2;
+m.ub(strcmp(mBase2.rxns, 'MAR09140_REV')) = 10;%galactose
+%m.ub(strcmp(mBase2.rxns, 'MAR09034_REV')) = 10;%glucose
+m.ub(strcmp(mBase2.rxns, 'MAR09048_REV')) = 0;%oxygen
+%m.c = double(strcmp(mBase2.rxns,'MAR04130'));%set objective function to ATP consumption
+%m.c = double(strcmp(mBase.rxns,'MAR09140_REV'));%set objective function to ATP consumption
+
+%constructEquations(m, 'MAR09140')
+
+res = solveLP(m,1);
+-res.f
+
 
 table(substrateNames.', resHypoxiaWithProdh, resHypoxiaNoProdh,resHypoxiaNoProdhNoO2)
 
@@ -243,6 +276,11 @@ listMetRxnsWithFluxes(mBase, sols{1}, 'L-lactate', true, 10^-9);
 listMetRxnsWithFluxes(mBase, sols{1}, 'pyruvate', true, 10^-9);
 listMetRxnsWithFluxes(mBase, sols{1}, 'acetyl-CoA', true, 10^-9);
 listMetRxnsWithFluxes(mBase, sols{1}, 'acetate', true, 10^-9);
+
+listMetRxnsWithFluxes(mBase, sols{3}, 'glutamate', true, 10^-9);
+listMetRxnsWithFluxes(mBase, sols{3}, 'AKG', true, 10^-9);
+
+
 
 listMetRxnsWithFluxes(mBase, sols2{1}, 'L-lactate', true, 10^-9);
 listMetRxnsWithFluxes(mBase, sols2{1}, 'pyruvate', true, 10^-9);

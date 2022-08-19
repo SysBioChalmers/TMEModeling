@@ -18,7 +18,7 @@ function exchModel = constrainMedium(model, metaboliteNames, fluxLimits, checkFe
 %
 
 if nargin < 5 || isempty(includesComp)
-    includesComp = false; %if [s] should be added to the metabolites or not
+    includesComp = false; %if [e] should be added to the metabolites or not
 end
 
 if nargin < 4 || isempty(checkFeas)
@@ -47,7 +47,7 @@ for i = 1:length(metaboliteNames)
     if (includesComp)
         metIndx = getIndexes(model, metaboliteNames{i}, 'metcomps');
     else
-        metIndx = getIndexes(model, strcat(metaboliteNames{i},'[s]'), 'metcomps');
+        metIndx = getIndexes(model, strcat(metaboliteNames{i},'[e]'), 'metcomps');
     end
 
     % get rxns for metabolite

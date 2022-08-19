@@ -1,4 +1,4 @@
-function bloodData = prepBloodData(showPlot, exportData)
+function bloodData = prepBloodData(showPlot, exportData, useBloodFlowModel)
 % bloodData
 %
 % Make sure the path is in the project base before continuing
@@ -17,6 +17,10 @@ end
 
 if (nargin < 2)
     exportData = false;
+end
+
+if (nargin < 3)
+    useBloodFlowModel = false;
 end
 
 %read metabolites and constraints from the excel file with metabolite
@@ -56,7 +60,14 @@ end
 
 
 diffCoeff(~filt) = predict(fit, mw(~filt));
-CxD = bloodConc.*diffCoeff;
+if ~useBloodFlowModel
+    CxD = bloodConc.*diffCoeff;
+else
+    %Here, we don't multiply with the diffusion coefficient.
+    %We also increase the oxygen concentration
+    CxD = bloodConc;
+    CxD(strcmp(metabolites,'O2')) = 9200; %9200 (9.2 mmolar)comes from "The oxygenstatus of the arterial blood revised: relevant oxygen parameters for monitoring the arterial oxygen availability"
+end
 
 
 
@@ -136,5 +147,5 @@ constrainedHamMets={
 
 bloodData.totDxC = [CxD;repmat(min(CxD)*10, length(constrainedHamMets),1)];
 bloodData.totMets = [metabolites; constrainedHamMets];
-bloodData.totMets = strcat(bloodData.totMets, '[s]');
+bloodData.totMets = strcat(bloodData.totMets, '[e]');
 %table(bloodData.totMets, bloodData.totDxC)

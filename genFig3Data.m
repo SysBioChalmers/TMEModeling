@@ -1,4 +1,4 @@
-cd C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy %the folder with the functions
+cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
 
 %load the models
 load('data/ltModel.mat');
@@ -68,13 +68,13 @@ exchRxnInd = exchRxnInd(sel);
 %Create mapping between the blood mets and the exch mets:
 mappingExchMets = NaN(length(exchRxnMets),1);
 for i = 1:length(mappingExchMets)
-    ind = find(strcmp(strcat(exchRxnMets(i),'[s]'), bloodData.totMets));
+    ind = find(strcmp(strcat(exchRxnMets(i),'[e]'), bloodData.totMets));
     if length(ind) == 1
         mappingExchMets(i) = ind;
     end
 end
 %test
-tmp = strcat(exchRxnMets(1:(length(exchRxnMets)-1)),'[s]');
+tmp = strcat(exchRxnMets(1:(length(exchRxnMets)-1)),'[e]');
 all(strcmp(tmp, bloodData.totMets(mappingExchMets(1:(length(exchRxnMets)-1)))))%ok, all equal
 
 
@@ -170,9 +170,9 @@ sel = startsWith(m6.rxns, 'o_');
 sum(sel)
 hasSomeFlux = D2_8.resultSolutions{20}.x > 10^-8;
 sum(hasSomeFlux)
-osComp = find(strcmp(m6.comps, 'o_s'));%19
+osComp = find(strcmp(m6.comps, 'o_e'));%19
 osMets = m6.metComps == osComp;
-sComp = find(strcmp(m6.comps, 's'));%19
+sComp = find(strcmp(m6.comps, 'e'));%19
 sMets = m6.metComps == sComp;
 sum(osMets)%1448
 exchRxns = (sum(m6.S(osMets,:) ~= 0, 1) > 0) & (sum(m6.S(sMets,:) ~= 0, 1) > 0);
@@ -183,7 +183,7 @@ constructEquations(m6, m6.rxns(hasSomeFlux.' & exchRxns))
 %for a=20, typically amino acids, citrate, etc.
 %for a=50, linoleate
 
-disp('8:')
+disp('8A:')
 D2_8A = runASimulationFullModel(m6_2, aFigA, bloodData, cell_maintenance);
 save('data/D2_8A.mat', 'D2_8A')
 
@@ -211,5 +211,80 @@ m1OnlyLiteratureCollab = blockCollaboration(m1, literatureCollabMets);
 D2_11 = runASimulationFullModel(m1OnlyLiteratureCollab, aFigA, bloodData, cell_maintenance);
 save('data/D2_11.mat', 'D2_11');
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% For the blood flow model
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+bloodData2 = prepBloodData(false, false, true);
+%test
+bloodData2.totDxC(strcmp(bloodData2.totMets,'O2[e]'))
+
+%get the metabolites for each exchange reaction
+[~, exchRxnIndAll] = getExchangeRxns(ltModel, 'in');
+exchRxnMetsAll = cell(length(exchRxnIndAll), 1);
+
+for i = 1:length(exchRxnMetsAll)
+   exchRxnMetsAll{i} = ltModel.metNames{ltModel.S(:, exchRxnIndAll(i)) == 1};
+end
+
+%filter mets and exchange rxns that does not exist in the blood data (it is meaningless to work with them)
+%filters 5 metabolites + prot_pool
+sel = ismember(strcat(exchRxnMetsAll,'[e]'), bloodData2.totMets);
+exchRxnMetsAll(~sel)%H2O, Pi, sulfate, Fe2+, hypoxanthine, prot_pool
+%check the other way around - all exist there
+%sel2 = ismember(bloodData.totMets, strcat(exchRxnMets,'[s]'));
+%bloodData.totMets(~sel2)%this is just water etc.
+
+
+
+exchRxnMets = exchRxnMetsAll(sel);
+exchRxnInd = exchRxnIndAll(sel);
+
+%Create mapping between the blood mets and the exch mets:
+mappingExchMets = NaN(length(exchRxnMets),1);
+for i = 1:length(mappingExchMets)
+    ind = find(strcmp(strcat(exchRxnMets(i),'[e]'), bloodData2.totMets));
+    if length(ind) == 1
+        mappingExchMets(i) = ind;
+    end
+end
+%test
+tmp = strcat(exchRxnMets(1:(length(exchRxnMets)-1)),'[e]');
+all(strcmp(tmp, bloodData2.totMets(mappingExchMets(1:(length(exchRxnMets)-1)))))%ok, all equal
+
+load('data/ltModelFull.mat');
+disp('9_bloodflow:')
+
+
+
+
+%The "standard" range is roughly 10 times higher here
+a_bf = (0.00001:0.00001:0.001);
+aFigA_bf = (0.00001:0.000015:0.0015); %need longer range for this plot
+
+
+%The macrophage simulation
+macrData = readtable('data/MacrophageInput.txt');
+D2_9_bloodflow = runMacrophageSimulation(ltModelFull, a_bf, bloodData2, macrData, 0.1); %important to run on the full model - there are new exchange reactions used here that were not used when minimizing the model
+save('data/D2_9_bloodflow.mat', 'D2_9_bloodflow')
+
+%And a "normal" run for comparison
+disp('10_bloodflow:')
+D2_10_bloodflow = runASimulation(ltModelFull, a_bf, bloodData2, cell_maintenance);
+save('data/D2_10_bloodflow.mat', 'D2_10_bloodflow')
+
+%% Limit collaboration mets to those mentioned in literature and see what the growth rate is
+%
+
+%Normal run without collaboration
+disp('7_bloodflow:')
+D2_7_bloodflow = runASimulationFullModel(blockCollaboration(m1), aFigA_bf, bloodData2, cell_maintenance);
+save('data/D2_7_bloodflow.mat', 'D2_7_bloodflow');
+
+%Normal run without collaboration
+disp('11:')
+literatureCollabMets = {'L-lactate','pyruvate','acetone','acetoacetate','(R)-3-hydroxybutanoate','(10Z)-heptadecenoic acid', 'glutamine', 'alanine'};
+m1OnlyLiteratureCollab = blockCollaboration(m1, literatureCollabMets);
+D2_11_bloodflow = runASimulationFullModel(m1OnlyLiteratureCollab, aFigA_bf, bloodData2, cell_maintenance);
+save('data/D2_11_bloodflow.mat', 'D2_11_bloodflow');
 
 

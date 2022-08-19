@@ -1,9 +1,15 @@
 %% Here we prepare the model to use.
 
-cd C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy/
-load('C:/Work/MatlabCode/components/human-GEM/Human-GEM/model/Human-GEM.mat')
+cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
+load('C:/Work/MatlabCode/components/human-GEM/Human-GEM_1_12/Human-GEM/model/Human-GEM.mat')
+
+%Remove some reactions we do not need - amino acid triplets and drug reactions
+m = removeDrugReactions(ihuman);
+AATriplets = getAATripletReactions(m,false);
+m = removeReactions(m, AATriplets);
+
 %tic
-ltModelOrig = CreateECLightModel(ihuman, true, 1);
+ltModelOrig = CreateECLightModel(m, true, 1);
 %toc %Elapsed time is 103.032560 seconds.
 
 ltModelCorr = curateModel(ltModelOrig);
@@ -11,7 +17,7 @@ ltModelCorr.lb(ltModelCorr.lb == -1000) = -Inf; %These operations help the solve
 ltModelCorr.ub(ltModelCorr.ub == 1000) = Inf;
 
 bloodData = prepBloodData(false, true);
-ltModelMin = minimizeModel(ltModelCorr, bloodData);
+ltModelMin = minimizeModel(ltModelCorr, bloodData); %13790 rxns
 save('data/ltModelMin.mat', 'ltModelMin');
 
 cell_maintenance = 1.833; %mmol ATP per gDW and hour, from "A Systematic Evaluation of Methods for Tailoring Genome-Scale Metabolic Models"

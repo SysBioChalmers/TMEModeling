@@ -3,8 +3,8 @@
 %not to use collaboration mets if it doesn't have to to maximize growth.
 function outModel = addCollaborationCost(inModel)
 outModel = inModel;
-sComp = find(strcmp(outModel.comps,'s'));
-sfComp = find(strcmp(outModel.comps,'f_s'));
+sComp = find(strcmp(outModel.comps,'e'));
+sfComp = find(strcmp(outModel.comps,'f_e'));
 sMetsSel = outModel.metComps == sComp;
 sfMetsSel = outModel.metComps == sfComp;
 rxnsExpFSelTmp = (sum(outModel.S(sMetsSel,:) > 0,1) > 0).';

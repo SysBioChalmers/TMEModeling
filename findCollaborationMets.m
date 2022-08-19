@@ -31,7 +31,7 @@ for i = 1:nPoints
     %Filter mets that have >= 1000 as uptake bound
     %these are mets with reactions that have only one non-zero element in the S matrix
     %
-    sComp = find(strcmp(modelGrowth.comps,'s'));
+    sComp = find(strcmp(modelGrowth.comps,'e'));
     sMetsSel = modelGrowth.metComps == sComp;
     openInExchRxns = ((sum(modelGrowth.S ~= 0, 1) == 1) & (sum(modelGrowth.S > 0, 1) == 1)).' & modelGrowth.ub >= 1000;
     openMetsSel = sMetsSel & sum(modelGrowth.S(:,openInExchRxns) ~= 0, 2) > 0;
@@ -49,13 +49,13 @@ for i = 1:nPoints
         %and imported to the cancer cells
         %first find the reactions exporting these metabolites:
         %find the S compartment mets (use the input model as template)
-        sComp = find(strcmp(modelGrowth.comps,'s'));
-        sfComp = find(strcmp(modelGrowth.comps,'f_s'));
-        soComp = find(strcmp(modelGrowth.comps,'o_s'));
+        sComp = find(strcmp(modelGrowth.comps,'e'));
+        sfComp = find(strcmp(modelGrowth.comps,'f_e'));
+        soComp = find(strcmp(modelGrowth.comps,'o_e'));
         sMetsSel = modelGrowth.metComps == sComp;
         sfMetsSel = modelGrowth.metComps == sfComp;
         soMetsSel = modelGrowth.metComps == soComp;
-        %now, find reactions with export to s from s_f
+        %now, find reactions with export to e from f_e
         rxnsExpFSelTmp = (sum(modelGrowth.S(sMetsSel,:) > 0,1) > 0).';
         rxnsExpFSelTmp2 = (sum(modelGrowth.S(sfMetsSel,:) < 0,1) > 0).'; %these are not just transport reactions
         %sum(rxnsExpFSelTmp)%4351
