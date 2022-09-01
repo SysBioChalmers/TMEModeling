@@ -1,8 +1,24 @@
+%This function is copied from the TME modeling project
 function res = listMetRxnsWithFluxes(model, sol, met, consumption, lowerLimit)
 if nargin < 5
     lowerLimit = 0;
 end
-mets = strcmp(model.metNames,met);
+
+%first check if the met is specific for a certain compartment
+startIndex = regexp(met,'\[[a-zA-Z_0-9\-]+\]');
+startIndex = startIndex(length(startIndex)); %the compound can look like this, so pick the last one: 'heptadecanoyl-[ACP][c]'
+if ~isempty(startIndex)
+    compStr = extractBetween(met, startIndex+1, strlength(met) - 1);
+    comp = find(strcmp(model.comps, compStr));
+    if isempty(comp) %if the compound looks like this, i.e., the [ACP] is not a compartment, list for all compartments: 'heptadecanoyl-[ACP]'
+        mets = strcmp(model.metNames,met);
+    else
+        met = extractBetween(met, 1, startIndex-1);
+        mets = strcmp(model.metNames,met) & (model.metComps == comp);
+    end
+else
+    mets = strcmp(model.metNames,met);
+end
 SMultFlux = model.S(mets,:) .* sol.x.';
 if (consumption)
     rxns = sum(SMultFlux < -lowerLimit, 1) > 0;

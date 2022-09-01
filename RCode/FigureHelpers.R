@@ -355,15 +355,6 @@ plotFluxesGenSigned = function(RX, title, rxnNames, fluxNames, includeIRat, line
             fluxNeg = fluxes[rxns == rxnNamesRecord[k]]*fluxScaling[f]
             fluxPos = fluxes[rxns == paste0(rxnNamesRecord[k],"_REV")]*fluxScaling[f]
             val = val + fluxPos - fluxNeg
-            #if (!subtractLists) {
-            #  val = val + fluxes[rxns == rxnNamesRecord[k]]*fluxScaling[f]
-            #} else {
-            #  if (k == 1) {
-            #    val = val + fluxes[rxns == rxnNamesRecord[k]]*fluxScaling[f]
-            #  } else {
-            #    val = val - fluxes[rxns == rxnNamesRecord[k]]*fluxScaling[f]
-            #  }
-            #}
           }
           vals[(f-1)*nPoints + i] = val
         }
@@ -412,15 +403,9 @@ plotFluxesGenSigned = function(RX, title, rxnNames, fluxNames, includeIRat, line
       pA = pA + ggplot2::labs(y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*", h"^"-1"*")"), x="a", title=title)
     }
   }
-  #ggplot2::labs(y="Flux (mmol/gDW/h, 1/gDW/h)", x="a", title=title) +
-  pA = pA + ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
-  
-  #    if (addRects) {
-  #      d = tibble(x1=0,x2=1,y1=0,y2=0.5);
-  #      pA = pA + geom_rect(data=d, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2,fill=rgb(1,0,0)), color=rgb(0,0,0), alpha = 0.2)
-  #      
-  #    }
-  
+  pA = pA + theme_bw()
+  pA = pA + theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+
   
   return(pA)
   

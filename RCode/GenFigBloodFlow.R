@@ -108,9 +108,9 @@ pD
 pSupBf1 = ggarrange(pA,pB,pC,pD, nrow=2, ncol=2, labels=c("A","B","C","D"))
 
 ggsave(
-  paste0(fig___path, "SupBf1.svg"),
+  paste0(fig___path, "SupBf1.png"),
   plot = pSupBf1,
-  width = 8, height = 8, dpi = 300)
+  width = 10, height = 7, dpi = 300)
 
 
 
@@ -127,9 +127,11 @@ ggsave(
 D2_7_bf = readMat("data/D2_7_bloodflow.mat") #m1 with blocked collaboration
 D2_11_bf = readMat("data/D2_11_bloodflow.mat") #m1 with literature collaboration mets only
 
-normGrowth2 = extractRxnFluxes(D2_7_bf$D2.7.bloodflow, 'MAR13082') #compare to the s model
+normGrowth2 = extractRxnFluxes(D2_7_bf$D2.7.bloodflow, 'MAR13082')
 literatureGrowth = extractRxnFluxes(D2_11_bf$D2.11.bloodflow, 'MAR13082')
 as3 = as.numeric(unlist(D2_7_bf$D2.7.bloodflow[1,1,1]))
+
+max(literatureGrowth/normGrowth2, na.rm = TRUE) #1.008611, so 0.86% - becomes that large because the growthrate is close to 0. not that relevant
 
 #for some reason there is an NA in the middle somewhere, don't display that point
 diff = literatureGrowth - normGrowth2;
@@ -177,6 +179,6 @@ pB2
 pSupBf2 = ggarrange(pA2,pB2, nrow=1, ncol=2, labels=c("A","B"))
 
 ggsave(
-  paste0(fig___path, "SupBf2.svg"),
+  paste0(fig___path, "SupBf2.png"),
   plot = pSupBf2,
   width = 8, height = 4, dpi = 300)

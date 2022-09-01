@@ -27,14 +27,25 @@ pA = pA + annotate(geom="text", x=0.000045, y=0.075, label="Hypoxic", color="bla
 pA = pA + annotate(geom="text", x=0.000085, y=0.050, label="Enzyme-\nlimited", color="black", size=5)
 pA
 
+#pB = plotFluxesGen(D1_1$D1.1, "Internal fluxes", 
+#                   list('MAR13082', 'MAR04358', 'MAR06921', 'MAR06918', 'MAR06914', 'MAR06916'), 
+#                   c("biomass", "glycolysis        ", "complex I", "complex III", "complex IV", "complex V"), 
+#                   FALSE, 
+#                   c(1,1,1,1,1,1), 
+#                   c(1,2,3,4,5,6),
+#                   fluxScaling = c(1,0.01, rep(0.1,4)),
+#                   lineSizes = c(1.3,1,1,1,1,1),
+#                   hideBiomassUnit = TRUE)
+#pB
+
 pB = plotFluxesGen(D1_1$D1.1, "Internal fluxes", 
-                   list('MAR13082', 'MAR04358', 'MAR06921', 'MAR06918', 'MAR06914', 'MAR06916'), 
-                   c("biomass", "glycolysis        ", "complex I", "complex III", "complex IV", "complex V"), 
+                   list('MAR13082', 'MAR04358', 'MAR06921', c('MAR04652_REV','MAR08743_REV'),'MAR06918', 'MAR06914', 'MAR06916'), 
+                   c("biomass", "glycolysis        ", "complex I", "complex II", "complex III", "complex IV", "complex V"), 
                    FALSE, 
-                   c(1,1,1,1,1,1), 
-                   c(1,2,3,4,5,6),
-                   fluxScaling = c(1,0.01, rep(0.1,4)),
-                   lineSizes = c(1.3,1,1,1,1,1),
+                   c(1,1,1,1,1,1,1), 
+                   c(1,2,3,4,5,6,7),
+                   fluxScaling = c(1,0.01, rep(0.1,5)),
+                   lineSizes = c(1.3,1,1,1,1,1,1),
                    hideBiomassUnit = TRUE)
 pB
 
@@ -224,8 +235,10 @@ p2A = plotFluxesGenSigned(D1_1$D1.1, "",
                           hideBiomassUnit = TRUE)
 p2A
 
+
+
 #the amino acids with low fluxes and that are not proportional to growth
-p2B = plotFluxesGenSigned(D1_1$D1.1, "", 
+p2Sup1 = plotFluxesGenSigned(D1_1$D1.1, "", 
                           list("MAR09066","MAR09062",  "MAR09065", "MAR09071",  "MAR09038", "MAR09046"),
                           c(   "arginine","asparagine","cysteine", "glutamate", "histidine","valine"), 
                           FALSE, 
@@ -234,12 +247,12 @@ p2B = plotFluxesGenSigned(D1_1$D1.1, "",
                           fluxScaling = c(1,1,1,1,1,1),
                           lineSizes = c(1,1,1,1,1,1),
                           hideBiomassUnit = TRUE)
-p2B
+p2Sup1
 
 
 
 #the rest of the amino acids (proportional to growth)
-p2Sup = plotFluxesGenSigned(D1_1$D1.1, "", 
+p2Sup2 = plotFluxesGenSigned(D1_1$D1.1, "", 
                           list("MAR09061","MAR09039",  "MAR09040","MAR09041","MAR09042",  "MAR09043",     "MAR09045",  "MAR09064"),
                           c(   "alanine", "isoleucine","leucine", "lysine",  "methionine","phenylalanine","tryptophan","tyrosine"), 
                           FALSE, 
@@ -248,7 +261,10 @@ p2Sup = plotFluxesGenSigned(D1_1$D1.1, "",
                           fluxScaling = c(1,1,1,1,1,1,1,1),
                           lineSizes = c(1,1,1,1,1,1,1,1),
                           hideBiomassUnit = TRUE)
-p2Sup
+p2Sup2
+
+p2Sup = ggarrange(p2Sup1,p2Sup2, nrow=1, ncol=2, labels=c("A","B"))
+
 
 ggsave(
   paste0(fig___path, "Fig2A.eps"),
@@ -256,14 +272,9 @@ ggsave(
   width = 5, height = 4, dpi = 300)
 
 ggsave(
-  paste0(fig___path, "Fig2B.eps"),
-  plot = p2B,
-  width = 5, height = 4, dpi = 300)
-
-ggsave(
   paste0(fig___path, "Fig2Sup.png"),
   plot = p2Sup,
-  width = 5, height = 4, dpi = 300)
+  width = 10, height = 4, dpi = 300)
 
 ##############################################
 #Supplementary for glutamine addiction
@@ -355,6 +366,103 @@ ggsave(
   paste0(fig___path, "SupProline.png"),
   plot = pX,
   width = 5, height = 3.5, dpi = 300)
+
+
+#####################################
+# Supplementary figure about ATP production 
+# when some reactions are allowed to go in reverse
+#####################################
+
+#First increase in ATP production
+
+D5_6_1 = readMat("data/D5_6_1.mat")
+D5_6_2 = readMat("data/D5_6_2.mat")
+D5_6_3 = readMat("data/D5_6_3.mat")
+D5_6_4 = readMat("data/D5_6_4.mat")
+D5_6_5 = readMat("data/D5_6_5.mat")
+
+a5 = as.numeric(unlist(D5_6_1$D5.6.1[1,1,1]))
+
+b1 = extractRxnFluxes(D5_6_1$D5.6.1, 'MAR03964')
+b2 = extractRxnFluxes(D5_6_2$D5.6.2, 'MAR03964')
+b3 = extractRxnFluxes(D5_6_3$D5.6.3, 'MAR03964')
+b4 = extractRxnFluxes(D5_6_4$D5.6.4, 'MAR03964')
+b5 = extractRxnFluxes(D5_6_5$D5.6.5, 'MAR03964')
+
+c2 = (b2/b1 - 1)*100
+c3 = (b3/b1 - 1)*100
+c4 = (b4/b1 - 1)*100
+c5 = (b5/b1 - 1)*100
+
+
+#We skip the Complex I in reverse with blocked citrate synthase - it has a very limited effect and makes the plot less readable
+
+numFluxes = 3
+labels = c("PRODH", "C II",  "Both")
+
+group = factor(rep(1:numFluxes, 1, each=length(a5)), 1:numFluxes, labels)
+lst = c(1,1,2)
+cs = c(1,2,4)
+
+ds = tibble(x=rep(a5,numFluxes), 
+            y=c(c2,c4,c5), 
+            Reaction = group
+)
+
+pSA = ggplot(ds, aes(x = x, y = y, colour = Reaction, linetype = Reaction)) +
+  geom_line(size=1.3) +
+  scale_linetype_manual(values = lst, labels = labels) +
+  scale_color_manual(values = cs, labels = labels) +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank()) +
+  labs(y=expression("ATP incr.(%)"), x="a", title="")
+pSA
+
+ggsave(
+  paste0(fig___path, "Fig3E.eps"),
+  plot = pSA,
+  width = 5, height = 2, dpi = 300)
+
+
+#######################################
+# Now plot succinate export and where that comes from.
+# #####################################
+
+dSuccExp = extractRxnFluxes(D5_6_4$D5.6.4, 'succExp')
+dCIIRev1 = extractRxnFluxes(D5_6_4$D5.6.4, 'MAR04652') #the reaction is defined in reverse direction, version 1
+dCIIRev2 = extractRxnFluxes(D5_6_4$D5.6.4, 'MAR08743') #the reaction is defined in reverse direction, version 2
+dCIIRev = dCIIRev1 + dCIIRev2
+dATPGen = extractRxnFluxes(D5_6_4$D5.6.4, 'MAR04152') #there are two reactions, one that generates GTP, catch them both
+dGTPGen = extractRxnFluxes(D5_6_4$D5.6.4, 'MAR04147_REV') #Defined in the opposite order for some reason
+dForwardDir = dATPGen + dGTPGen
+
+numFluxes = 3
+labels = c("C II rev",  "Fwd TCA", "Succ. Exp.")
+
+group = factor(rep(1:numFluxes, 1, each=length(a5)), 1:numFluxes, labels)
+lst = c(1,1,2)
+cs = c(2,3,1)
+
+ds = tibble(x=rep(a5,numFluxes), 
+            y=c(dCIIRev,dForwardDir,dSuccExp), 
+            Reaction = group
+)
+
+pSB = ggplot(ds, aes(x = x, y = y, colour = Reaction, linetype = Reaction)) +
+  geom_line(size=1.3) +
+  scale_linetype_manual(values = lst, labels = labels) +
+  scale_color_manual(values = cs, labels = labels) +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank()) +
+  labs(y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*")"), x="a", title="")
+
+pSB
+
+ggsave(
+  paste0(fig___path, "FigSupCII.png"),
+  plot = pSB,
+  width = 5, height = 3.75, dpi = 300)
+
 
 
 

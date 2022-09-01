@@ -66,7 +66,7 @@ else
     %Here, we don't multiply with the diffusion coefficient.
     %We also increase the oxygen concentration
     CxD = bloodConc;
-    CxD(strcmp(metabolites,'O2')) = 9200; %9200 (9.2 mmolar)comes from "The oxygenstatus of the arterial blood revised: relevant oxygen parameters for monitoring the arterial oxygen availability"
+    CxD(strcmp(metabolites,'O2')) = 9200; %9200 (9.2 mmolar)comes from "The oxygen status of the arterial blood revised: relevant oxygen parameters for monitoring the arterial oxygen availability"
 end
 
 

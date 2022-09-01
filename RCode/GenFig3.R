@@ -52,6 +52,12 @@ pC = ggplot(ds, aes(x = x, y = y, colour = Model, linetype = Model)) +
 
 pC
 
+ggsave(
+  paste0(fig___path, "Fig3C.eps"),
+  plot = pC,
+  width = 5, height = 3.75, dpi = 300)
+
+
 D2_6 = readMat("data/D2_6.mat")
 
 succeeded = D2_6$D2.6[1,1,1]
@@ -208,10 +214,6 @@ pSE
 
 
 
-ggsave(
-  paste0(fig___path, "Fig3C.eps"),
-  plot = pC,
-  width = 5, height = 3.75, dpi = 300)
 
 ggsave(
   paste0(fig___path, "Fig3D.eps"),
@@ -225,6 +227,8 @@ ggsave(
   paste0(fig___path, "FigSupCollab.png"),
   plot = figSupCollab,
   width = 10, height = 11.25, dpi = 300)
+
+
 
 
 

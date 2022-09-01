@@ -50,6 +50,37 @@ toc
 %With 10^-6: Elapsed time is 199.900651 seconds.
 save('data/D1_1.mat', 'D1_1')
 
+%Investigate how complex I bypass is implemented:
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'NADH', true, 10^-2);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'proline', true, 10^-3);%PRODH in the right direction is not active, so no proline cycle
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'glutamate', true, 10^-3);%1 option to L-glutamate 5-semialdehyde
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'L-glutamate 5-semialdehyde', true, 10^-3);%mainly to 1-pyrroline-5-carboxylate
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, '1-pyrroline-5-carboxylate', true, 10^-3);%to prodh in reverse and pycr, so no complex I bypass
+%No complete complex I bypass at all in that sense, we get rid of the NADH but don't really convert it into ubiquinol/FADH2
+
+%Check what produces H+[i]
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'H+[i]', false, 10^-7);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'H+[i]', true, 10^-7);
+
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{30}, 'H+[i]', false, 10^-7);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{30}, 'H+[i]', true, 10^-7);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{30}, 'Pi[m]', true, 10^-7);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{30}, 'ATP[m]', true, 10^-3);%Pi goes to creatine-phosphate[m] (and slightly to dGMP[m]) MAR08427_REV
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{30}, 'creatine-phosphate', true, 10^-4); %MAR06328 should have been used...
+constructEquations(ltModel, 'MAR08427') %{'ADP[m] + creatine-phosphate[m] + H+[m] + 2.451e-05 prot_pool[c] => ATP[m] + creatine[m]'}
+constructEquations(ltModel, 'MAR08430') %{'creatine-phosphate[m] => creatine-phosphate[c]'}
+constructEquations(ltModel, 'MAR06328') %{'ADP[c] + ATP[m] + 0.00027666 prot_pool[c] => ADP[m] + ATP[c]'}
+%So, this is pretty ok, it is known that much energy is lost when transporting ATP out of mitochondria. The question is why it is not needed at a=60?
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'ATP[m]', true, 10^-3);%also creatine phosphate
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'Pi[m]', true, 10^-3);
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'Pi[m]', false, 10^-3); % a little is imported at H+[i] cost, but most comes from PPi[m], although at an energy loss
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{60}, 'PPi[m]', false, 10^-3); %transported from cytosol
+%So, when enzyme constraints becomes a more serious problem, it is better to waste ATP by separating PPi than to spend H+[i] it seems.
+%This costs half an ATP per ATP/ADP transported, while the other cost is 1 H+[i], i.e., 1/3 ATP, for the other transporter. Probably some enzyme usage advantage.
+%Transporting ATP/ADP or creatine phosphate doesn't matter much, the latter is used in skeletal muscle.
+
+listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'NADH', true, 10^-2);
+
 aFigA = (0.000001:0.0000015:0.00015);
 D2_0 = runASimulation(ltModel, aFigA, bloodData, cell_maintenance);
 save('data/D2_0.mat', 'D2_0')
@@ -273,6 +304,11 @@ all(strcmp(tmp, bloodData2.totMets(mappingExchMets(1:(length(exchRxnMets)-1)))))
 
 %The "standard" range is roughly 10 times higher here
 a_bf = (0.00001:0.00001:0.001);
+
+%%%%%%%%%%%%%
+%Fig A
+%%%%%%%%%%%%%
+
 tic
 D1_1_bloodflow = runASimulation(ltModel, a_bf, bloodData2, cell_maintenance);
 toc
@@ -301,56 +337,64 @@ listMetRxnsWithFluxes(ltModel, D1_1_bloodflow.resultSolutions{5}, 'THF', false, 
 %Conclusion: Lipids provide a higher FADH2/NADH ratio, and are therefore more beneficial if we want to bypass complex I, since less effort needs to be spent 
 %on getting rid of the NADH.
 
+%%%%%%%%%%%%%
+%Fig B
+%%%%%%%%%%%%%
+
 D1_2_bloodflow = runMetaboliteImportanceSimulation(ltModel, a_bf, bloodData2, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, true);
 save('data/D1_2_bloodflow.mat', 'D1_2_bloodflow');
 
 
+%%%%%%%%%%%%%
+%Fig C
+%%%%%%%%%%%%%
+
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'0.0267 DNA[n] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_9_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_9_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_9_bloodflow.mat', 'D1_9_bloodflow');
 
 %remove nucleotides
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 45 H2O[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_10_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_10_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_10_bloodflow.mat', 'D1_10_bloodflow');
 
 %remove glycogen
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_11_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_11_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_11_bloodflow.mat', 'D1_11_bloodflow');
 
 %remove cofactors
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 5.3375 protein_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_12_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_12_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_12_bloodflow.mat', 'D1_12_bloodflow');
 
 %remove protein
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_13_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_13_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_13_bloodflow.mat', 'D1_13_bloodflow');
 
 %remove lipids
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_14_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_14_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_14_bloodflow.mat', 'D1_14_bloodflow');
 
 %remove metabolites
 rxnsToAdd.rxns = {'incomplete_biomass'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]'};
 tmpModel = addRxns(ltModel,rxnsToAdd, 3);
-D1_15_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_15_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_15_bloodflow.mat', 'D1_15_bloodflow');
 
 %now a special case, where we remove only the ATP cost of the protein
@@ -362,7 +406,7 @@ rxnsToAdd.rxns = {'incomplete_biomass', 'special_protein_pool'};
 rxnsToAdd.equations = {'45 ATP[c] + 0.0267 DNA[n] + 45 H2O[c] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass2[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => 45 ADP[c] + 45 H+[c] + 45 Pi[c] + biomass[c]', ...
     '0.0721 glycine[c] + 0.0801 alanine[c] + 0.0512 arginine[c] + 0.0375 asparagine[c] + 0.0556 aspartate[c] + 0.0183 cysteine[c] + 0.0428 glutamine[c] + 0.0783 glutamate[c] + 0.0228 histidine[c] + 0.0442 isoleucine[c] + 0.0911 leucine[c] + 0.0719 lysine[c] + 0.0222 methionine[c] + 0.0368 phenylalanine[c] + 0.051 proline[c] + 0.0661 serine[c] + 0.0535 threonine[c] + 0.0098 tryptophan[c] + 0.0281 tyrosine[c] + 0.0667 valine[c] => protein_pool_biomass2[c]'};
 tmpModel = addRxns(tmpModel,rxnsToAdd, 3);
-D1_16_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_16_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_16_bloodflow.mat', 'D1_16_bloodflow');
 
 %now a special case 2, where we remove the ATP cost of the protein + the other ATP cost
@@ -374,7 +418,7 @@ rxnsToAdd.rxns = {'incomplete_biomass', 'special_protein_pool'};
 rxnsToAdd.equations = {'0.0267 DNA[n] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass2[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => biomass[c]', ...
     '0.0721 glycine[c] + 0.0801 alanine[c] + 0.0512 arginine[c] + 0.0375 asparagine[c] + 0.0556 aspartate[c] + 0.0183 cysteine[c] + 0.0428 glutamine[c] + 0.0783 glutamate[c] + 0.0228 histidine[c] + 0.0442 isoleucine[c] + 0.0911 leucine[c] + 0.0719 lysine[c] + 0.0222 methionine[c] + 0.0368 phenylalanine[c] + 0.051 proline[c] + 0.0661 serine[c] + 0.0535 threonine[c] + 0.0098 tryptophan[c] + 0.0281 tyrosine[c] + 0.0667 valine[c] => protein_pool_biomass2[c]'};
 tmpModel = addRxns(tmpModel,rxnsToAdd, 3);
-D1_17_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_17_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_17_bloodflow.mat', 'D1_17_bloodflow');
 
 %now a special case 3, where we remove the ATP cost of the protein + the other ATP cost + protein
@@ -386,7 +430,7 @@ rxnsToAdd.rxns = {'incomplete_biomass', 'special_protein_pool'};
 rxnsToAdd.equations = {'0.0267 DNA[n] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 0.2212 lipid_pool_biomass[c] + 0.4835 metabolite_pool_biomass[c] => biomass[c]', ...
     '0.0721 glycine[c] + 0.0801 alanine[c] + 0.0512 arginine[c] + 0.0375 asparagine[c] + 0.0556 aspartate[c] + 0.0183 cysteine[c] + 0.0428 glutamine[c] + 0.0783 glutamate[c] + 0.0228 histidine[c] + 0.0442 isoleucine[c] + 0.0911 leucine[c] + 0.0719 lysine[c] + 0.0222 methionine[c] + 0.0368 phenylalanine[c] + 0.051 proline[c] + 0.0661 serine[c] + 0.0535 threonine[c] + 0.0098 tryptophan[c] + 0.0281 tyrosine[c] + 0.0667 valine[c] => protein_pool_biomass2[c]'};
 tmpModel = addRxns(tmpModel,rxnsToAdd, 3);
-D1_18_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_18_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_18_bloodflow.mat', 'D1_18_bloodflow');
 
 
@@ -399,7 +443,7 @@ rxnsToAdd.rxns = {'incomplete_biomass', 'special_protein_pool'};
 rxnsToAdd.equations = {'0.0267 DNA[n] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0012 cofactor_pool_biomass[c] + 5.3375 protein_pool_biomass2[c] + 0.4835 metabolite_pool_biomass[c] => biomass[c]', ...
     '0.0721 glycine[c] + 0.0801 alanine[c] + 0.0512 arginine[c] + 0.0375 asparagine[c] + 0.0556 aspartate[c] + 0.0183 cysteine[c] + 0.0428 glutamine[c] + 0.0783 glutamate[c] + 0.0228 histidine[c] + 0.0442 isoleucine[c] + 0.0911 leucine[c] + 0.0719 lysine[c] + 0.0222 methionine[c] + 0.0368 phenylalanine[c] + 0.051 proline[c] + 0.0661 serine[c] + 0.0535 threonine[c] + 0.0098 tryptophan[c] + 0.0281 tyrosine[c] + 0.0667 valine[c] => protein_pool_biomass2[c]'};
 tmpModel = addRxns(tmpModel,rxnsToAdd, 3);
-D1_22_bloodflow = runASimulation(tmpModel, a_bf, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+D1_22_bloodflow = runASimulation(tmpModel, a_bf, bloodData2, cell_maintenance, false, NaN, 'incomplete_biomass');
 save('data/D1_22_bloodflow.mat', 'D1_22_bloodflow');
 
 
