@@ -28,11 +28,6 @@ pA = plotFluxesGen(D1_1_bf$D1.1.bloodflow, "Metabolite uptake and export",
                    fluxScaling = c(1,0.01, 0.05, 0.2, 10, 0.1, 0.01, 0.05),
                    lineSizes = c(1.3,1,1,1,1,1,1,1),
                    hideBiomassUnit = TRUE)
-#pA = pA + geom_vline(xintercept = 0.000020, linetype="dashed")
-#pA = pA + geom_vline(xintercept = 0.000068, linetype="dashed")
-#pA = pA + annotate(geom="text", x=0.000007, y=0.045, label="Necrotic", color="black", angle = 90, size=5)
-#pA = pA + annotate(geom="text", x=0.000045, y=0.075, label="Hypoxic", color="black", size=5)
-#pA = pA + annotate(geom="text", x=0.000085, y=0.050, label="Enzyme-\nlimited", color="black", size=5)
 pA
 
 
@@ -100,8 +95,9 @@ pD = ggplot(ds, aes(x = x, y = y, colour = Removed, linetype = Removed)) +
   geom_line() +
   scale_linetype_manual(values = lst, labels = labels) +
   scale_color_manual(values = cs, labels = labels) +
-  ggplot2::labs(y=expression(Log[2]*"(Growth ratio vs full biomass)"), x="a") +
-  ggplot2::theme_bw() + ggplot2::theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  labs(y=expression(Log[2]*"(Growth ratio vs full biomass)"), x="a") +
+  theme_bw() + 
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 pD
 
@@ -146,9 +142,9 @@ formatC(ds$y[90], digits = 30, format = "f") #1.000000000122490684262288596074, 
 
 pA2 = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
-  #ylim(1,1.0015) +
-  ggplot2::labs(y=expression("Growth increase (h"^"-1"*")"), x="a", title="Effect of literature collab. metabolites") +
-  ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+  labs(y=expression("Growth increase (h"^"-1"*")"), x="a", title="Effect of literature collab. metabolites") +
+  theme_bw() +
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 pA2
 #as can be seen, there is really no benefit at all, just roundoff noise - no point showing a plot
 
@@ -172,8 +168,10 @@ ds = tibble(x=as2,
 
 pB2 = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
-  ggplot2::labs(y=expression("Growth ratio: collab. vs no collab."), x="a", title="Macrophage collaboration") +
-  ggplot2::theme_bw()
+  labs(y=expression("Growth ratio: collab. vs no collab."), x="a", title="Macrophage collaboration") +
+  theme_bw() +
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
 pB2
 
 pSupBf2 = ggarrange(pA2,pB2, nrow=1, ncol=2, labels=c("A","B"))

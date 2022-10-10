@@ -1,3 +1,9 @@
+################################
+# This file contains a lot of manual 
+# mapping work between HMDB and our 
+# other source for blood concentrations
+################################
+
 library(qdapTools)
 library(tidyverse)
 library(R.matlab)
@@ -353,6 +359,7 @@ pA = ggplot(ds,aes(x=x,y=y)) +
   ggplot2::geom_line(data=dsLine) +
   labs(y=expression("HMDB blood conc ( "*mu*"M )"), x=expression("Used plasma conc ( "*mu*"M )")) +
   theme_bw() + 
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   coord_cartesian(xlim = c(1,11000), ylim = c(1,11000)) +
   scale_x_continuous(trans = 'log2') +
   scale_y_continuous(trans = 'log2')

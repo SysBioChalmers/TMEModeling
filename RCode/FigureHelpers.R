@@ -27,13 +27,15 @@ plotFluxDiv = function(RX, title) {
   col = c(rgb(0,0,0),gg_color_hue(6),rgb(0.5,0.5,0.5))
   labels = c("glucose", "glutamine", "lipid pool", "cholesterol       ", "oxygen", "lactate")
   
-  pA = ggplot2::ggplot(ds,ggplot2::aes(x=x,y=y, group=Metabolite, size=Metabolite, colour=Metabolite)) +
-    ggplot2::geom_line(ggplot2::aes(x=x,y=y, group=Metabolite, colour=Metabolite)) +
+  pA = ggplot(ds,ggplot2::aes(x=x,y=y, group=Metabolite, size=Metabolite, colour=Metabolite)) +
+    geom_line(ggplot2::aes(x=x,y=y, group=Metabolite, colour=Metabolite)) +
     scale_linetype_manual(values = rep(1,6), labels = labels) +
     scale_size_manual(values = rep(1,6), labels = labels) +
     scale_color_manual(values = col[c(2,3,4,8,6,7)], labels = labels) +
-    ggplot2::labs(y="Min required fraction", x="a", title=title) +
-    ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    labs(y="Min required fraction", x="a", title=title) +
+    theme_bw() +
+    theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+  
   
   return(pA)  
 }
@@ -70,17 +72,14 @@ plotRed = function(RX, title) {
   
   
   
-  #metsToPlot = c("glucose", "glutamine", "glycine", "D-lactate", "oxygen")
   glucose = vals[,mets == "glucose"]
   glutamine = vals[,mets == "glutamine"]
   NEFA = vals[,mets == "NEFA blood pool in"]
   chol = vals[,mets == "cholesterol"]
   
-  #glycine = fluxDivs[,mets == "glycine"]
   lactate = vals[,mets == "L-lactate"]
   oxygen = vals[,mets == "O2"]
-  #print(glucose)
-  
+
   numMet = 6
   group = factor(rep(1:numMet, 1, each=length(a)), 1:numMet, c("glucose", "glutamine", "lipid pool", "cholesterol", "oxygen", "lactate"))
   ds = tibble(x=rep(a,numMet), y=c(glucose, glutamine, NEFA, chol, oxygen, lactate), Metabolite = group)
@@ -93,40 +92,39 @@ plotRed = function(RX, title) {
     scale_size_manual(values = rep(1,6), labels = labels) +
     scale_color_manual(values = col[c(2,3,4,8,6,7)], labels = labels) +
     ggplot2::labs(y="Growth ratio reduced vs normal", x="a", title=title) +
-    ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    ggplot2::theme_bw() +
+    theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
   
   return(pA)  
 }
 
 plotFluxDiv2 = function(RX, title) {
   mets = as.character(unlist(RX[4,1,1]))
-  #print(mets)
   fluxDivs = RX[2,1,1]$fluxDivUbs
   a = as.numeric(unlist(RX[5,1,1]))
   
-  #metsToPlot = c("glucose", "glutamine", "glycine", "D-lactate", "oxygen")
   glucose = fluxDivs[,mets == "glucose"]
   glutamine = fluxDivs[,mets == "glutamine"]
   NEFA = fluxDivs[,mets == "NEFA blood pool in"]
 
-  #glycine = fluxDivs[,mets == "glycine"]
   lactate = fluxDivs[,mets == "L-lactate"]
   oxygen = fluxDivs[,mets == "O2"]
-  #print(glucose)
-  
+
   numMet = 5
   group = factor(rep(1:numMet, 1, each=length(a)), 1:numMet, c("glucose", "glutamine", "lipid pool", "oxygen", "lactate"))
   ds = tibble(x=rep(a,numMet), y=c(glucose, glutamine, NEFA, oxygen, lactate), Metabolite = group)
   col = c(rgb(0,0,0),gg_color_hue(6),rgb(0.5,0.5,0.5))
   labels = c("glucose", "glutamine", "lipid pool", "oxygen", "lactate")
   
-  pA = ggplot2::ggplot(ds,ggplot2::aes(x=x,y=y, group=Metabolite, size=Metabolite, colour=Metabolite)) +
-    ggplot2::geom_line(ggplot2::aes(x=x,y=y, group=Metabolite, colour=Metabolite)) +
+  pA = ggplot(ds,ggplot2::aes(x=x,y=y, group=Metabolite, size=Metabolite, colour=Metabolite)) +
+    geom_line(ggplot2::aes(x=x,y=y, group=Metabolite, colour=Metabolite)) +
     scale_linetype_manual(values = rep(1,numMet), labels = labels) +
     scale_size_manual(values = rep(1,numMet), labels = labels) +
     scale_color_manual(values = col[c(2,3,4,6,7)], labels = labels) +
-    ggplot2::labs(y="Min required fraction", x="a", title=title) +
-    ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    labs(y="Min required fraction", x="a", title=title) +
+    theme_bw()  + 
+    theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+  
   
   return(pA)  
 }
@@ -312,6 +310,7 @@ plotFluxesGen = function(RX, title, rxnNames, fluxNames, includeIRat, linestyles
     }
     #ggplot2::labs(y="Flux (mmol/gDW/h, 1/gDW/h)", x="a", title=title) +
     pA = pA + ggplot2::theme_bw() + theme(legend.text.align = 0)#+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    pA = pA + theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
     
 #    if (addRects) {
 #      d = tibble(x1=0,x2=1,y1=0,y2=0.5);

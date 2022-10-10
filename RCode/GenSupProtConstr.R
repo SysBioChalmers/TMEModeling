@@ -5,7 +5,7 @@ library(ggpubr)
 
 fig___path = "Z:/projects/TMEModeling/figures/"
 
-setwd("C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy")
+setwd("C:/Work/MatlabCode/projects/TMEModeling/TMEModeling")
 
 RPCData = readMat("data/FitProteinConstraintResults.mat")
 

@@ -5,7 +5,7 @@ library(ggpubr)
 
 fig___path = "Z:/projects/TMEModeling/figures/"
 
-setwd("C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy")
+setwd("C:/Work/MatlabCode/projects/TMEModeling/TMEModeling")
 
 DCData = readMat("data/diffCoeff.mat")
 
@@ -24,7 +24,8 @@ pA = ggplot(ds,aes(x=x,y=y)) +
   geom_text(mapping = aes(label=mets), hjust=0.5, vjust=vjust) +
 #  ggplot2::geom_line(data=dsLine) +
   labs(y=expression("Diff. Coeff * 10"^10*" ( m"^2*"/s)"), x="Molecular weight (g/mol)") +
-  theme_bw()
+  theme_bw() +
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 pA
 
 

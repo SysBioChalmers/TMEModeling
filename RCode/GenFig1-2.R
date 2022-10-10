@@ -311,7 +311,8 @@ pSBPA = ggplot(data=dfPlot, aes(x=x, y=y, fill=Condition)) +
   labs( y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*")"), x="", fill="Substrate: ", title = "Hypoxic") +
   scale_fill_manual(values=c("#82E182", "#229A22", "#E47060", "#AC210E")) + 
   theme_bw() +
-  theme(axis.text = element_text(size = 8), legend.position="bottom")
+  theme(axis.text = element_text(size = 8), legend.position="bottom") +
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
 pSBPA
 
@@ -331,7 +332,8 @@ pSBPB = ggplot(data=dfPlot, aes(x=x, y=y, fill=Condition)) +
   labs( y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*")"), x="", fill="Substrate: ", title = "Enzyme-limited") +
   scale_fill_manual(values=c("#82E182", "#229A22", "#E47060", "#AC210E")) +
   theme_bw() +
-  theme(axis.text = element_text(size = 8), legend.position="bottom")
+  theme(axis.text = element_text(size = 8), legend.position="bottom") +
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
 pSBPB
 
@@ -419,9 +421,9 @@ pSA = ggplot(ds, aes(x = x, y = y, colour = Reaction, linetype = Reaction)) +
 pSA
 
 ggsave(
-  paste0(fig___path, "Fig3E.eps"),
+  paste0(fig___path, "Fig2E.eps"),
   plot = pSA,
-  width = 5, height = 2, dpi = 300)
+  width = 5, height = 2.5, dpi = 300)
 
 
 #######################################

@@ -46,9 +46,9 @@ pC = ggplot(ds, aes(x = x, y = y, colour = Model, linetype = Model)) +
   geom_line() +
   scale_linetype_manual(values = lst, labels = labels) +
   scale_color_manual(values = cs, labels = labels) +
-  #ggplot2::labs(y="Flux (mmol/gDW/h, 1/gDW/h)", x="a", title=title) +
-  ggplot2::labs(y=expression("Growth rate (gDW"^"-1"*"h"^"-1"*")"), x="a", title="Growth rates") +
-  ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+  labs(y=expression("Growth rate (gDW"^"-1"*"h"^"-1"*")"), x="a", title="Growth rates") +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
 pC
 
@@ -78,7 +78,8 @@ ds = tibble(x=a,
 pD = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
   ggplot2::labs(y=expression("No. collaboration mets"), x="a", title="Collaboration metabolites") +
-  ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+  ggplot2::theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 pD
 
 collabMetsLog = rowSums(collaborationMets) > 0
@@ -138,7 +139,9 @@ ds = tibble(x=as2,
 pSD = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
   ggplot2::labs(y=expression("Growth ratio: collab. vs no collab."), x="a", title="Macrophage collaboration") +
-  ggplot2::theme_bw()
+  ggplot2::theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+
 pSD
 
 
@@ -172,8 +175,10 @@ formatC(ds$y[90], digits = 30, format = "f") #1.000000000122490684262288596074, 
 pSB = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
   #ylim(1,1.0015) +
-  ggplot2::labs(y=expression("Growth increase (h"^"-1"*")"), x="a", title="Effect of literature collab. metabolites") +
-  ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+  labs(y=expression("Growth increase (h"^"-1"*")"), x="a", title="Effect of literature collab. metabolites") +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+
 pSB
 #as can be seen, there is really no benefit at all, just roundoff noise - no point showing a plot
 
@@ -205,13 +210,11 @@ pSE = ggplot(ds, aes(x = x, y = y, colour=Setup)) +
   geom_line(size=1) +
   scale_color_manual(values = c(rgb(0,0,0),gg_color_hue(6)[1]), labels = c("normal", "constr. lactate")) +
   #ylim(1,1.0015) +
-  ggplot2::labs(y=expression("Growth rate (h"^"-1"*")"), x="a", title="Constrained lactate output") +
-  ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+  labs(y=expression("Growth rate (h"^"-1"*")"), x="a", title="Constrained lactate output") +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+
 pSE
-
-
-
-
 
 
 
