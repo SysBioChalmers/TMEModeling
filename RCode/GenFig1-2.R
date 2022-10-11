@@ -1,3 +1,5 @@
+#code for plotting Fig. 1-2 and associated suppliementary plots.
+##############################################################
 library(R.matlab)
 library(tidyverse)
 library(ggplot2)
@@ -27,16 +29,6 @@ pA = pA + annotate(geom="text", x=0.000045, y=0.075, label="Hypoxic", color="bla
 pA = pA + annotate(geom="text", x=0.000085, y=0.050, label="Enzyme-\nlimited", color="black", size=5)
 pA
 
-#pB = plotFluxesGen(D1_1$D1.1, "Internal fluxes", 
-#                   list('MAR13082', 'MAR04358', 'MAR06921', 'MAR06918', 'MAR06914', 'MAR06916'), 
-#                   c("biomass", "glycolysis        ", "complex I", "complex III", "complex IV", "complex V"), 
-#                   FALSE, 
-#                   c(1,1,1,1,1,1), 
-#                   c(1,2,3,4,5,6),
-#                   fluxScaling = c(1,0.01, rep(0.1,4)),
-#                   lineSizes = c(1.3,1,1,1,1,1),
-#                   hideBiomassUnit = TRUE)
-#pB
 
 pB = plotFluxesGen(D1_1$D1.1, "Internal fluxes", 
                    list('MAR13082', 'MAR04358', 'MAR06921', c('MAR04652_REV','MAR08743_REV'),'MAR06918', 'MAR06914', 'MAR06916'), 
@@ -76,9 +68,6 @@ ggsave(
   paste0(fig___path, "Fig1c.eps"),
   plot = pB,
   width = 5, height = 3.5, dpi = 300)
-
-#pA2 = pA + ggplot2::theme(legend.position="bottom", legend.title = element_blank())
-#pA2 #This might be an alternative
 
 ggsave(
   paste0(fig___path, "FigSupFVA1.png"),
@@ -293,7 +282,6 @@ c3Enz = as.numeric(D3_1$complexIIIEnzLim)
 c5Enz = as.numeric(D3_1$complexVEnzLim)
 
 #compare lactate and glutamine
-#
 
 y = c(atpHyp[1],atpHyp[3],
       tcaHyp[3],tcaHyp[3],

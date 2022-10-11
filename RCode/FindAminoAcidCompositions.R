@@ -1,3 +1,6 @@
+#code for finding the amino acid composition in collagen
+############################################################
+
 library(tidyverse)
 
 setwd("C:/Work/MatlabCode/projects/TMEModeling/TMEModeling")

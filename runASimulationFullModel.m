@@ -1,3 +1,4 @@
+%Runs the simulations used in for example Fig. 3C, one simulation per value in the a range.
 function res = runASimulationFullModel(inModel, a, bloodData, cellMaintenance, relaxOxygen)
 if nargin < 5
     relaxOxygen = false;

@@ -1,3 +1,5 @@
+# Code for generating Fig. S2
+##########################################
 library(R.matlab)
 library(tidyverse)
 library(ggplot2)
@@ -22,7 +24,6 @@ pA = ggplot(ds,aes(x=x,y=y)) +
   stat_smooth(method = "lm", col = "red") +
   geom_point() +
   geom_text(mapping = aes(label=mets), hjust=0.5, vjust=vjust) +
-#  ggplot2::geom_line(data=dsLine) +
   labs(y=expression("Diff. Coeff * 10"^10*" ( m"^2*"/s)"), x="Molecular weight (g/mol)") +
   theme_bw() +
   theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())

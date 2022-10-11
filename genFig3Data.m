@@ -1,3 +1,4 @@
+%Generates the data for figure 3 and associated supplementary figures
 cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
 
 %load the models
@@ -100,14 +101,6 @@ disp('2A:')
 D2_2A = runASimulationFullModel(m2, aFigA, bloodData, cell_maintenance);
 save('data/D2_2A.mat', 'D2_2A')
 
-%disp('2B:')
-%D2_2B = runMetaboliteImportanceSimulation(m2, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%R2_A = repairASimulationSmallModel(R2_A, ltModel, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%save('data/D2_2B.mat', 'D2_2B');
-%m2.rxns(startsWith(m2.rxns,'EXCH_s2'))
-%m2.rxns(strcmp(m2.rxns,'EXCH_s2_m02403s'))
-
-
 disp('3A:')
 D2_3A = runASimulationFullModel(m3, aFigA, bloodData, cell_maintenance);
 save('data/D2_3A.mat', 'D2_3A')
@@ -122,17 +115,9 @@ disp('4A:')
 D2_4A = runASimulationFullModel(m4, aFigA, bloodData, cell_maintenance);
 save('data/D2_4A.mat', 'D2_4A')
 
-%D2_4B = runMetaboliteImportanceSimulation(m4, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%R2_A = repairASimulationSmallModel(R2_A, ltModel, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%save('data/D2_4B.mat', 'D2_4B');
-
 disp('5A:')
 D2_5A = runASimulationFullModel(m5, aFigA, bloodData, cell_maintenance);
 save('data/D2_5A.mat', 'D2_5A')
-
-%D2_5B = runMetaboliteImportanceSimulation(m5, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%R2_A = repairASimulationSmallModel(R2_A, ltModel, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cell_maintenance, false);
-%save('data/D2_5B.mat', 'D2_5B');
 
 %Run collaboration experiments (on the m2 model, somewhat in the middle params)
 %D2_6tmp = findCollaborationMets(m1, aFigA(100), bloodData, cell_maintenance);
@@ -149,9 +134,6 @@ save('data/D2_6.mat', 'D2_6');
 disp('6B:')
 D2_6B = findCollaborationMets(m2, aFigA, bloodData, cell_maintenance);
 save('data/D2_6B.mat', 'D2_6B');
-
-%D2_6B = findCollaborationMets(m1, a, bloodData, cell_maintenance);
-%save('data/D2_6B.mat', 'D2_6B');
 
 disp('7:')
 D2_7 = runASimulationFullModel(blockCollaboration(m1), aFigA, bloodData, cell_maintenance);

@@ -1,3 +1,4 @@
+%Curates the model by blocking some reactions etc.
 function [ltModelCorr] = curateModel(ltModelOrig, remFattyAcidRxns)
 
 if nargin < 2

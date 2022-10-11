@@ -1,3 +1,4 @@
+%Helper function to show fluxes from the result of a simulation
 function res = listExchRxnsWithFluxes(model, sol, uptake, lowerLimit)
 if nargin < 3
     lowerLimit = 0;

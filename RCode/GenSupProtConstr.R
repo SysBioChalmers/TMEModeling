@@ -1,3 +1,5 @@
+#This figure is not used in the paper, but can be useful when experimenting with fitting the protein constraint.
+
 library(R.matlab)
 library(tidyverse)
 library(ggplot2)

@@ -1,13 +1,5 @@
+%Runs the metabolite importance simulation (flux variability analysis).
 function res = runMetaboliteImportanceSimulation(inModel, a, bloodData, exchRxnMets, mappingExchMets, exchRxnInd, cellMaintenance, runReduced)
-% 
-% 
-%
-% Input:
-%
-%
-% Output:
-%
-%
 
 nPoints = length(a);
 res.resultSolutionsBasic = cell(nPoints,1);

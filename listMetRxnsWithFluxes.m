@@ -1,4 +1,4 @@
-%This function is copied from the TME modeling project
+%Helper function to show fluxes from the result of a simulation
 function res = listMetRxnsWithFluxes(model, sol, met, consumption, lowerLimit)
 if nargin < 5
     lowerLimit = 0;
@@ -6,8 +6,8 @@ end
 
 %first check if the met is specific for a certain compartment
 startIndex = regexp(met,'\[[a-zA-Z_0-9\-]+\]');
-startIndex = startIndex(length(startIndex)); %the compound can look like this, so pick the last one: 'heptadecanoyl-[ACP][c]'
 if ~isempty(startIndex)
+    startIndex = startIndex(length(startIndex)); %the compound can look like this, so pick the last one: 'heptadecanoyl-[ACP][c]'
     compStr = extractBetween(met, startIndex+1, strlength(met) - 1);
     comp = find(strcmp(model.comps, compStr));
     if isempty(comp) %if the compound looks like this, i.e., the [ACP] is not a compartment, list for all compartments: 'heptadecanoyl-[ACP]'
@@ -31,9 +31,13 @@ else
     SMultFluxPos(SMultFluxPos < 0) = 0;
     fluxes = sum(SMultFluxPos,1);
 end
-tbl = table(model.rxns(rxns), fluxes.', constructEquations(model, model.rxns(rxns)));
-tbl.Properties.VariableNames = {'Rxn', 'Metabolite Flux', 'Formula'};
-tbl
-res = tbl;
-
+if sum(rxns) > 0
+    tbl = table(model.rxns(rxns), fluxes.', constructEquations(model, model.rxns(rxns)));
+    tbl.Properties.VariableNames = {'Rxn', 'Metabolite Flux', 'Formula'};
+    tbl
+    res = tbl;
+else
+    tbl = 'None';
+    tbl
+    res=tbl;
 end

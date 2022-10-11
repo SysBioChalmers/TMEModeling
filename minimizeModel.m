@@ -1,15 +1,7 @@
 function outModel = minimizeModel(ecModelCorr, bloodData)
 % 
-% Removes 
+% Removes unnecessary reactions from the model, such as dead end rxns etc. Takes some time to run (> 1 hour).
 % 
-%
-% Input:
-%
-%
-% Output:
-%
-%   bloodData       The data
-%
 
 outModel = ecModelCorr;
 

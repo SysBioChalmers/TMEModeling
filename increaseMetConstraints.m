@@ -1,3 +1,4 @@
+%increases the uptake constraints of individual metabolites
 function exchModel = increaseMetConstraints(model, metaboliteNames, fluxAdditions, checkFeas, includesComp)
 
 if nargin < 5 || isempty(includesComp)

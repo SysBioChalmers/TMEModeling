@@ -1,3 +1,5 @@
+%Generates the data for figure 1 and 2 and associated supplementary figures
+
 cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
 
 %load the "small" model (i.e. just the ltModel, one cell type only)
@@ -46,8 +48,6 @@ a = (0.000001:0.000001:0.0001);
 tic
 D1_1 = runASimulation(ltModel, a, bloodData, cell_maintenance);
 toc
-%With 10^-9: Elapsed time is 174.101684 seconds.
-%With 10^-6: Elapsed time is 199.900651 seconds.
 save('data/D1_1.mat', 'D1_1')
 
 %Investigate how complex I bypass is implemented:
@@ -84,15 +84,6 @@ listMetRxnsWithFluxes(ltModel, D1_1.resultSolutions{50}, 'NADH', true, 10^-2);
 aFigA = (0.000001:0.0000015:0.00015);
 D2_0 = runASimulation(ltModel, aFigA, bloodData, cell_maintenance);
 save('data/D2_0.mat', 'D2_0')
-
-%rxnsToAdd = struct();
-%rxnsToAdd.rxns = {'dho_exp'};
-%rxnsToAdd.equations = {'(S)-dihydroorotate[c] =>'};
-%ltModelWithDho = addRxns(ltModel,rxnsToAdd, 3);
-
-%D1_1_DHO = runASimulation(ltModelWithDho, a, bloodData, cell_maintenance);
-%save('data/D1_1_DHO.mat', 'D1_1_DHO')
-
 
 
 

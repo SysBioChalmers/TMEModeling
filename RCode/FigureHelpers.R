@@ -1,3 +1,6 @@
+#Help functions for plotting
+############################
+
 library(R.matlab)
 library(tidyverse)
 library(ggplot2)
@@ -6,21 +9,17 @@ library(ggpubr)
 
 plotFluxDiv = function(RX, title) {
   mets = as.character(unlist(RX[4,1,1]))
-  #print(mets)
   fluxDivs = RX[2,1,1]$fluxDivUbs
   a = as.numeric(unlist(RX[5,1,1]))
   
-  #metsToPlot = c("glucose", "glutamine", "glycine", "D-lactate", "oxygen")
   glucose = fluxDivs[,mets == "glucose"]
   glutamine = fluxDivs[,mets == "glutamine"]
   NEFA = fluxDivs[,mets == "NEFA blood pool in"]
   chol = fluxDivs[,mets == "cholesterol"]
   
-  #glycine = fluxDivs[,mets == "glycine"]
   lactate = fluxDivs[,mets == "L-lactate"]
   oxygen = fluxDivs[,mets == "O2"]
-  #print(glucose)
-  
+
   numMet = 6
   group = factor(rep(1:numMet, 1, each=length(a)), 1:numMet, c("glucose", "glutamine", "lipid pool", "cholesterol", "oxygen", "lactate"))
   ds = tibble(x=rep(a,numMet), y=c(glucose, glutamine, NEFA, chol, oxygen, lactate), Metabolite = group)
@@ -203,9 +202,8 @@ plotFluxes = function(RX, title) {
     geom_line() +
     scale_linetype_manual(values = lst, labels = labels) +
     scale_color_manual(values = cs, labels = labels) +
-    #ggplot2::labs(y="Flux (mmol/gDW/h, 1/gDW/h)", x="a", title=title) +
     ggplot2::labs(y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*", gDW"^"-1"*"h"^"-1"*")"), x="a", title=title) +
-    ggplot2::theme_bw() #+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    ggplot2::theme_bw()
   
   return(pA)
 
@@ -288,7 +286,7 @@ plotFluxesGen = function(RX, title, rxnNames, fluxNames, includeIRat, linestyles
     if (labels[i] == "biomass") {
       labls[i] = expression("biomass (h"^"-1"*")")
     } else {
-      labls[i] = labels[i]#expression("test")#expression(labels[i])
+      labls[i] = labels[i]
     }
   }
   
@@ -308,17 +306,10 @@ plotFluxesGen = function(RX, title, rxnNames, fluxNames, includeIRat, linestyles
         pA = pA + ggplot2::labs(y=expression("Flux (mmol gDW"^"-1"*"h"^"-1"*", h"^"-1"*")"), x="a", title=title)
       }
     }
-    #ggplot2::labs(y="Flux (mmol/gDW/h, 1/gDW/h)", x="a", title=title) +
-    pA = pA + ggplot2::theme_bw() + theme(legend.text.align = 0)#+ ggplot2::theme(legend.position=legendPos, legend.title = element_blank())
+    pA = pA + ggplot2::theme_bw() + theme(legend.text.align = 0)
     pA = pA + theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
     
-#    if (addRects) {
-#      d = tibble(x1=0,x2=1,y1=0,y2=0.5);
-#      pA = pA + geom_rect(data=d, mapping=aes(xmin=x1, xmax=x2, ymin=y1, ymax=y2,fill=rgb(1,0,0)), color=rgb(0,0,0), alpha = 0.2)
-#      
-#    }
-    
-    
+
   return(pA)
   
 }

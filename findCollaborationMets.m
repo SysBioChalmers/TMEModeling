@@ -1,7 +1,23 @@
-%m2, a, bloodData, cell_maintenance
-%inModel = m2;
-%cellMaintenance = cell_maintenance;
 function res = findCollaborationMets(inModel, a, bloodData, cellMaintenance)
+% findCollaborationMets
+%
+% Finds potential collaboration mets between fibroblasts and tumor cells using an iterative algorithm. Takes a while to run.
+%
+% Input:
+%
+%   inModel         The combined model
+%
+%   a               The a range
+%
+%   bloodData       The blood data
+%
+%   cellMaintenance NGAM to use
+%
+% Output:
+%
+%   res             The resulting collaboration mets table
+%
+
 nPoints = length(a);
 res.succeeded = false(nPoints,1);
 res.a = a;

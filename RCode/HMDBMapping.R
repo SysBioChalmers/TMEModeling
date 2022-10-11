@@ -2,6 +2,10 @@
 # This file contains a lot of manual 
 # mapping work between HMDB and our 
 # other source for blood concentrations
+# The code also produces Fig. S1.
+# Note that this is just to check that the 
+# source we use for blood concentrations
+# is ok. So these values are not used!
 ################################
 
 library(qdapTools)
@@ -127,7 +131,7 @@ concCalcTableCollFilt2[srtNew$ix,]$conc
 
 #concCalcTableColl$ref[grepl( "10.1016/j.jaci.2015.01.022", concCalcTableColl$ref , fixed = TRUE)]
 
-"10.1016/j.jaci.2015.01.022"
+#"10.1016/j.jaci.2015.01.022"
 
 
 

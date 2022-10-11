@@ -1,3 +1,5 @@
+%Runs the macrophage simulation, where some of the cells are assumed to die, thereby supplying
+%resources for growth.
 function res = runMacrophageSimulation(inModel, a, bloodData, macrData, fracReuse)
 
 nPoints = length(a);

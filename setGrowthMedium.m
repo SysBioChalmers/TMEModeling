@@ -2,7 +2,8 @@ function exchModel = setGrowthMedium(model, isEC, medium, measuredMets, fluxes, 
 % setGrowthMedium
 %
 % Set the growth medium for a model derived from Human-GEM. This function
-% works for either standard or enzyme constrained-GEMs
+% works for either standard or enzyme constrained-GEMs. The code was supplied from 
+% Jonathan Robinson and modified for this project.
 %
 % Input:
 %

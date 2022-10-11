@@ -1,15 +1,5 @@
-%% Here we test the full tumor model.
+%% Exports met names from the model
 
-%load the precalculated EC model
-%load('C:/Work/MatlabCode/projects/HMASandbox/HMA_Sandbox/Johan/OptimalTMEGrowthStrategy/ecHumanGEM_batch.mat')
-%ecModelOrig = ecModel_batch;
-
-%pmet = startsWith(ecModelOrig.metNames, 'pmet_')
-%sum(pmet)%3791
-%prot = startsWith(ecModelOrig.metNames, 'prot_')
-%sum(prot)%3225
-
-%ecModelOrig.metNames(~(pmet|prot))
 cd C:/Work/MatlabCode/projects/TMEModeling/TMEModeling
 load('C:/Work/MatlabCode/components/human-GEM/Human-GEM/model/Human-GEM.mat')
 

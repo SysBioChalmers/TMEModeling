@@ -1,14 +1,8 @@
 function bloodData = prepBloodData(showPlot, exportData, useBloodFlowModel)
-% bloodData
+% Prepares the blood data by loading it from disk, fitting a linear model to 
+% the diffusion coefficients, etc.
 %
 % Make sure the path is in the project base before continuing
-%
-% Input:
-%
-%
-% Output:
-%
-%   bloodData       The data
 %
 
 if (nargin < 1)
