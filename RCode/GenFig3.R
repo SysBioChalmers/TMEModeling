@@ -13,6 +13,7 @@ source("RCode/FigureHelpers.R")
 
 #plot growth of the small model vs full model, with low ECM
 
+D1_1 = readMat("data/D1_1.mat")
 D2_0 = readMat("data/D2_0.mat")
 D2_1A = readMat("data/D2_1A.mat")
 D2_2A = readMat("data/D2_2A.mat")
@@ -185,7 +186,6 @@ pSB
 #as can be seen, there is really no benefit at all, just roundoff noise - no point showing a plot
 
 
-D1_1 = readMat("data/D1_1.mat")
 D1_8 = readMat("data/D1_8.mat")
 
 #plot to test only
@@ -212,7 +212,7 @@ pSE = ggplot(ds, aes(x = x, y = y, colour=Setup)) +
   geom_line(size=1) +
   scale_color_manual(values = c(rgb(0,0,0),gg_color_hue(6)[1]), labels = c("normal", "constr. lactate")) +
   #ylim(1,1.0015) +
-  labs(y=expression("Growth rate (h"^"-1"*")"), x="a", title="Constrained lactate output") +
+  labs(y=expression("Growth rate (h"^"-1"*")"), x="a", title="") +
   theme_bw() + 
   theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
@@ -226,13 +226,17 @@ ggsave(
   width = 5, height = 3.75, dpi = 300)
 
 
-figSupCollab = ggarrange(pSA,pSB,pSC,pSD,pSE, nrow=3, ncol=2, labels=c("A","B","C","D","E"))
+figSupCollab = ggarrange(pSA,pSB,pSC,pSD, nrow=2, ncol=2, labels=c("A","B","C","D"))
 
 ggsave(
   paste0(fig___path, "FigSupCollab.png"),
   plot = figSupCollab,
-  width = 10, height = 11.25, dpi = 300)
+  width = 10, height = 7.5, dpi = 300)
 
+ggsave(
+  paste0(fig___path, "FigSupLact.eps"),
+  plot = pSE,
+  width = 5, height = 2.75, dpi = 300)
 
 
 

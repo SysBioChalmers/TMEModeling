@@ -39,7 +39,91 @@ plotFluxDiv = function(RX, title) {
   return(pA)  
 }
 
-plotRed = function(RX, title) {
+plotFluxDivLine = function(RX, colSel) {
+  threshold = 0.95
+  mets = as.character(unlist(RX[4,1,1]))
+  fluxDivs = RX[2,1,1]$fluxDivUbs
+  a = as.numeric(unlist(RX[5,1,1]))
+  
+  glucose = fluxDivs[,mets == "glucose"]
+  glutamine = fluxDivs[,mets == "glutamine"]
+  NEFA = fluxDivs[,mets == "NEFA blood pool in"]
+  chol = fluxDivs[,mets == "cholesterol"]
+  
+  lactate = fluxDivs[,mets == "L-lactate"]
+  oxygen = fluxDivs[,mets == "O2"]
+  
+  #metList = list(glucose, glutamine, NEFA, chol, lactate, oxygen)
+  metList = list(lactate, oxygen, chol, NEFA, glutamine, glucose)
+  metD = NULL
+  startD = NULL
+  endD = NULL
+  onD = NULL
+  for (i in 1:length(metList)) {
+    started = FALSE
+    startPos = a[1]
+    for (j in 1:length(a)) {
+      above = (!is.nan(metList[[i]][j])) && metList[[i]][j] >= threshold
+      if (!started) {
+        if (above) {
+          started = TRUE
+          #add segment
+          metD = c(metD, i)
+          startD = c(startD, startPos)
+          endD = c(endD, a[j])
+          onD = c(onD,0)
+          startPos = a[j]
+        }
+      } else {
+        if (!above) {
+          started = FALSE
+          #add segment
+          metD = c(metD, i)
+          startD = c(startD, startPos)
+          endD = c(endD, a[j])
+          onD = c(onD,1)
+          startPos = a[j]
+        }
+        
+      }
+    }
+    #add segment
+    metD = c(metD, i)
+    startD = c(startD, startPos)
+    endD = c(endD, a[j])
+    if (started) {
+      onD = c(onD,1)
+    }
+    else {
+      onD = c(onD,0)
+    }
+  }
+  
+  numMet = 6
+  colTmp = c(rgb(0,0,0),gg_color_hue(6),rgb(0.5,0.5,0.5))
+  col = colTmp[colSel]
+  ds = data.frame(id=factor(metD, 1:6, 1:6), on = as.factor(onD), start=startD, end = endD)
+  
+  
+  #ggplot(ds, aes(x=factor(name, levels=unique(id)), color=unique(id))) +
+  pA= ggplot(ds, aes(x=id, color=id, )) +
+    geom_linerange(aes(ymin=start, ymax=end, size=on, linetype=on)) +
+    #  geom_linerange(aes(ymin=end, ymax=refresh, colour="period2"), size=5) +
+    coord_flip() +
+    #scale_colour_manual(name="period", values=c("period1"="black", "period2"="red")) +
+    scale_colour_manual(values=rev(col)) +
+    scale_size_manual(values=c(0.5,1.3)) +
+    scale_linetype_manual(values=c("solid","solid")) +
+    theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks=element_blank(),panel.background = element_rect("white", "white", 0, 0, "white"), 
+          panel.grid.major= element_blank(),panel.grid.minor= element_blank(), legend.position = "None")
+  
+  
+  
+  return(pA)  
+}
+
+
+plotRed = function(RX, title, yAxisText = "Growth ratio reduced vs normal") {
   mets = as.character(unlist(RX[4,1,1]))
   resultSolutions = RX[1,1,1]$resultSolutionsBasic
   
@@ -49,7 +133,7 @@ plotRed = function(RX, title) {
   
   vals = matrix(NA,nrow=nPoints, ncol=length(mets))
   lowestAInd = NA
-
+  
   redGrowth = RX[3,1,1]$metsRedGrowth
   
   for (i in 1:nPoints) {
@@ -78,7 +162,7 @@ plotRed = function(RX, title) {
   
   lactate = vals[,mets == "L-lactate"]
   oxygen = vals[,mets == "O2"]
-
+  
   numMet = 6
   group = factor(rep(1:numMet, 1, each=length(a)), 1:numMet, c("glucose", "glutamine", "lipid pool", "cholesterol", "oxygen", "lactate"))
   ds = tibble(x=rep(a,numMet), y=c(glucose, glutamine, NEFA, chol, oxygen, lactate), Metabolite = group)
@@ -90,12 +174,13 @@ plotRed = function(RX, title) {
     scale_linetype_manual(values = rep(1,6), labels = labels) +
     scale_size_manual(values = rep(1,6), labels = labels) +
     scale_color_manual(values = col[c(2,3,4,8,6,7)], labels = labels) +
-    ggplot2::labs(y="Growth ratio reduced vs normal", x="a", title=title) +
+    ggplot2::labs(y=yAxisText, x="a", title=title) +
     ggplot2::theme_bw() +
     theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
   
   return(pA)  
 }
+
 
 plotFluxDiv2 = function(RX, title) {
   mets = as.character(unlist(RX[4,1,1]))

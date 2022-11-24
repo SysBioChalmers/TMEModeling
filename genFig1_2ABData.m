@@ -215,6 +215,7 @@ rxnsToAdd.equations = {'0.0267 DNA[n] + 0.1124 RNA[c] + 0.4062 glycogen[c] + 0.0
     '0.0721 glycine[c] + 0.0801 alanine[c] + 0.0512 arginine[c] + 0.0375 asparagine[c] + 0.0556 aspartate[c] + 0.0183 cysteine[c] + 0.0428 glutamine[c] + 0.0783 glutamate[c] + 0.0228 histidine[c] + 0.0442 isoleucine[c] + 0.0911 leucine[c] + 0.0719 lysine[c] + 0.0222 methionine[c] + 0.0368 phenylalanine[c] + 0.051 proline[c] + 0.0661 serine[c] + 0.0535 threonine[c] + 0.0098 tryptophan[c] + 0.0281 tyrosine[c] + 0.0667 valine[c] => protein_pool_biomass2[c]'};
 tmpModel = addRxns(tmpModel,rxnsToAdd, 3);
 D1_17 = runASimulation(tmpModel, a, bloodData, cell_maintenance, false, NaN, 'incomplete_biomass');
+
 save('data/D1_17.mat', 'D1_17');
 
 %now a special case 3, where we remove the ATP cost of the protein + the other ATP cost + protein

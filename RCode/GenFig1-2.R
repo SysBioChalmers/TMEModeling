@@ -17,10 +17,10 @@ pA = plotFluxesGen(D1_1$D1.1, "Metabolite uptake and export",
                    list('MAR13082', 'MAR09034_REV', 'MAR09063_REV', 'MAR09033_REV', 'MAR09285_REV', 'MAR09048_REV', 'MAR09135'),  #'EX_propropro[e]'
                    c("biomass", "glucose upt.", "glutamine upt.", "lipid pool upt.", "cholesterol upt.", "oxygen upt.", "lactate exp."), 
                    FALSE, 
-                   c(1,1,1,1,1,1,1,1), 
-                   c(1,2,3,4,8,6,7,5),
-                   fluxScaling = c(1,0.01, 0.05, 0.2, 10, 0.1, 0.01, 0.05),
-                   lineSizes = c(1.3,1,1,1,1,1,1,1),
+                   c(1,1,1,1,1,1,1), 
+                   c(1,2,3,4,8,6,7),
+                   fluxScaling = c(1,0.01, 0.05, 0.2, 10, 0.1, 0.01),
+                   lineSizes = c(1.3,1,1,1,1,1,1),
                    hideBiomassUnit = TRUE)
 pA = pA + geom_vline(xintercept = 0.000020, linetype="dashed")
 pA = pA + geom_vline(xintercept = 0.000068, linetype="dashed")
@@ -44,6 +44,7 @@ pB
 D1_2 = readMat("data/D1_2.mat");
 pC = plotFluxDiv(D1_2$D1.2, "Growth limitation from metabolites");
 pC
+
 
 
 D1_3 = readMat("data/D1_3.mat");
@@ -85,13 +86,27 @@ ggsave(
 #################################################################
 
 D1_2 = readMat("data/D1_2.mat");
-pSRed = plotRed(D1_2$D1.2, "");
-pSRed
+pRed = plotRed(D1_2$D1.2, "", "Growth ratio red. vs norm.")
+pRed
+
+#ggsave(
+#  paste0(fig___path, "FigSupRedMet.png"),
+#  plot = pRed,
+#  width = 5, height = 3.5, dpi = 300)
+ggsave(
+  paste0(fig___path, "FigRedMet.eps"),
+  plot = pRed,
+  width = 4.78, height = 2.5, dpi = 300)
+
+
+pFVA = plotFluxDivLine(D1_2$D1.2, c(1,2,3,4,8,6,7))
+pFVA
 
 ggsave(
-  paste0(fig___path, "FigSupRedMet.png"),
-  plot = pSRed,
-  width = 5, height = 3.5, dpi = 300)
+  paste0(fig___path, "Fig1DFVA.eps"),
+  plot = pFVA,
+  width = 2.95, height = 0.6, dpi = 300)
+
 
 #################################################################
 #supplementary fig for biomass equation with reduced ATP cost
@@ -195,8 +210,9 @@ pX = ggplot(ds, aes(x = x, y = y, colour = Removed, linetype = Removed)) +
   geom_line() +
   scale_linetype_manual(values = lst, labels = labels) +
   scale_color_manual(values = cs, labels = labels) +
-  ggplot2::labs(y=expression(Log[2]*"(Growth ratio vs full biomass)"), x="a") +
-  ggplot2::theme_bw() + ggplot2::theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+  labs(y=expression(Log[2]*"(Growth ratio vs full biomass)"), x="a") +
+  theme_bw() + 
+  theme(legend.title = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 pX
 
@@ -204,6 +220,39 @@ ggsave(
   paste0(fig___path, "SupReducedBiomass.png"),
   plot = pX,
   width = 5, height = 4, dpi = 300)
+
+
+
+#A reduced plot for Fig. 1 - use other colors
+aS5 = as.numeric(unlist(D1_1$D1.1[1,1,1]))
+numFluxes = 5
+labels = c("No ATP", "No lipids", "No ATP prot.", "No 2xATP", "No 2xATP, lipids")
+
+group = factor(rep(1:numFluxes, each = length(aS5)), 1:numFluxes, labels)
+lst = c(1,1,1,1,1)
+cs = c(1,2,3,4,5)
+
+ds = tibble(x=rep(aS5,numFluxes), 
+            y=log2(c(noATP/fB, noLip/fB, noATPProt/fB, noATP2x/fB, no22/fB)), 
+            Removed = group
+)
+clrX = c(rgb(0,0,0),gg_color_hue(6))
+pX = ggplot(ds, aes(x = x, y = y, colour = Removed, linetype = Removed)) +
+  geom_line(size=1.3) +
+  scale_linetype_manual(values = lst, labels = labels) +
+  scale_color_manual(values = clrX, labels = labels) +
+  labs(y=expression(Log[2]*"(Growth ratio vs full biomass)"), x="a") +
+  theme_bw() + 
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  guides(color=guide_legend(title="Biomass reduction"), linetype=guide_legend(title="Biomass reduction"))
+
+pX
+
+
+ggsave(
+  paste0(fig___path, "ReducedBiomass.eps"),
+  plot = pX,
+  width = 4.85, height = 2.8, dpi = 300)
 
 
 #############################
@@ -454,5 +503,28 @@ ggsave(
   width = 5, height = 3.75, dpi = 300)
 
 
+
+mydata[,2:4] <- lapply(mydata[,2:4], as.Date)
+
+
+
+
+
+
+
+library(ggplot2)
+name <- c("DATA1", "DATA2", "DATA3", "DATA1")
+start <- c("1988-01-01","1994-01-01", "1988-01-01", "2016-01-01")
+end <- c("2013-12-31","2013-05-31","2014-03-31", "2017-01-01")
+refresh <- c("2014-02-28","2013-07-25","2014-05-20", "2018-01-01")
+mydata <- data.frame(name, start, end, refresh, color=as.factor(c(1,2,3,1)))
+ggplot(mydata, aes(x=factor(name, levels=unique(name)), color=color)) +
+  geom_linerange(aes(ymin=start, ymax=end), size=5) +
+#  geom_linerange(aes(ymin=end, ymax=refresh, colour="period2"), size=5) +
+  coord_flip() +
+  #scale_colour_manual(name="period", values=c("period1"="black", "period2"="red")) +
+  scale_colour_manual(values=c("black","green", "blue")) +
+  theme(axis.title = element_blank(), axis.text = element_blank(), axis.ticks=element_blank(),panel.background = element_rect("white", "white", 0, 0, "white"), 
+        panel.grid.major= element_blank(),panel.grid.minor= element_blank(), legend.position = "None")
 
 
