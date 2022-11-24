@@ -36,7 +36,7 @@ substrateRxns = { ...
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% First look at glutamine addiction in hypoxia without enzyme constraints
+% First look at ATP production per substrate in hypoxia without enzyme constraints
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 mBase = ltModel;
@@ -85,7 +85,7 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Then look at glutamine addiction with enzyme constraints, but no hypoxia
+% Then look at ATP production per substrate with enzyme constraints, but no hypoxia
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 mBase = ltModel;
@@ -368,6 +368,7 @@ save('data/D5_6_2.mat', 'D5_6_2')
 
 %%%%%%%%%%%%%%%%%%
 % case 3 - Succinate export on, also resulting in that complex II can be run in reverse. Citrate synthase in reverse is blocked.
+%          This is not used in the final figures.
 %%%%%%%%%%%%%%%%%%
 
 m = mBase;
