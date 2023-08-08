@@ -1,6 +1,5 @@
 %Runs the simulations used in for example Fig. 1B, one simulation per value in the a range.
 function res = rxnDependenceTest(inModel, aHypox, aNormal, bloodData, cellMaintenance)
-cd '..';%fix this later
 %for test
 %aHypox = a(30)
 %aNormal = a(100)

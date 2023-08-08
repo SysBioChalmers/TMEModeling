@@ -112,7 +112,7 @@ cScale = 1/0.9699
 oScale = 1/0.03
 
 #other cells: no lipids, little glutamine, no cholesterol, no albumin
-pSC = plotFluxesGen(D2_8$D2.8, "Collab. with other cells", 
+pSD = plotFluxesGen(D2_8$D2.8, "Collab. with other cells", 
                    list('MAR09034_REV', 'MAR09048_REV', 'MAR09135', 'o_MAR09034_REV', 'o_MAR09048_REV', 'o_MAR09135'), 
                    c("C glucose upt.", "C oxygen upt.", "C lactate exp.", "O glucose upt.", "O oxygen upt.", "O lactate exp."), 
                    FALSE, 
@@ -121,7 +121,7 @@ pSC = plotFluxesGen(D2_8$D2.8, "Collab. with other cells",
                    fluxScaling = c(cScale,cScale*10,cScale,oScale,oScale*10,oScale),
                    lineSizes = c(1,1,1,1,1,1),
                    hideBiomassUnit = TRUE)
-pSC
+pSD
 
 
 ################
@@ -139,13 +139,13 @@ ds = tibble(x=as2,
             y=macroGrowth/normGrowth
 )
 
-pSD = ggplot(ds, aes(x = x, y = y)) +
+pSE = ggplot(ds, aes(x = x, y = y)) +
   geom_line() +
   ggplot2::labs(y=expression("Growth ratio: collab. vs no collab."), x="a", title="Macrophage collaboration") +
   ggplot2::theme_bw() + 
   theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
-pSD
+pSE
 
 
 
@@ -184,6 +184,27 @@ pSB = ggplot(ds, aes(x = x, y = y)) +
 
 pSB
 #as can be seen, there is really no benefit at all, just roundoff noise - no point showing a plot
+D2_11b = readMat("data/D2_11b.mat") #m1 with literature collaboration mets only, H2O2 added.
+literatureGrowth2 = extractRxnFluxes(D2_11b$D2.11b, 'MAR13082')
+diff2 = literatureGrowth2 - normGrowth2;
+sel = rep(TRUE, length(diff2))
+sel[(1:length(sel)) > 30 & is.na(diff2)] = FALSE
+
+ds = tibble(x=as3[sel], 
+            y=diff2[sel]
+)
+
+formatC(ds$y[90], digits = 30, format = "f") #0.000000000000000097144514654701, maybe just roundoff uncertainties, really nothing
+
+pSC = ggplot(ds, aes(x = x, y = y)) +
+  geom_line() +
+  #ylim(1,1.0015) +
+  labs(y=expression("Growth increase (h"^"-1"*")"), x="a", title="Effect of lit. collab. metabolites + H2O2") +
+  theme_bw() + 
+  theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
+
+pSC
+
 
 
 D1_8 = readMat("data/D1_8.mat")
@@ -208,7 +229,7 @@ as2 = as.numeric(unlist(D1_1$D1.1[1,1,1]))
 
 ds = tibble(x=rep(as2,2), y=c(normGrowth, lacRedGrowth), Setup = factor(c(rep(0,length(as2)), rep(1,length(as2))), c(0,1), c("normal", "constr. lactate")))
 
-pSE = ggplot(ds, aes(x = x, y = y, colour=Setup)) +
+pSF = ggplot(ds, aes(x = x, y = y, colour=Setup)) +
   geom_line(size=1) +
   scale_color_manual(values = c(rgb(0,0,0),gg_color_hue(6)[1]), labels = c("normal", "constr. lactate")) +
   #ylim(1,1.0015) +
@@ -216,7 +237,7 @@ pSE = ggplot(ds, aes(x = x, y = y, colour=Setup)) +
   theme_bw() + 
   theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
 
-pSE
+pSF
 
 
 
@@ -226,16 +247,16 @@ ggsave(
   width = 5, height = 3.75, dpi = 300)
 
 
-figSupCollab = ggarrange(pSA,pSB,pSC,pSD, nrow=2, ncol=2, labels=c("A","B","C","D"))
+figSupCollab = ggarrange(pSA,pSB,pSC,pSD,pSE, nrow=3, ncol=2, labels=c("A","B","C","D","E"))
 
 ggsave(
   paste0(fig___path, "FigSupCollab.png"),
   plot = figSupCollab,
-  width = 10, height = 7.5, dpi = 300)
+  width = 10, height = 10, dpi = 300)
 
 ggsave(
   paste0(fig___path, "FigSupLact.eps"),
-  plot = pSE,
+  plot = pSF,
   width = 5, height = 2.75, dpi = 300)
 
 

@@ -8,8 +8,6 @@ cell_maintenance = 1.833; %mmol ATP per gDW and hour, from "A Systematic Evaluat
 bloodData = prepBloodData();
 a = (0.000001:0.000001:0.0001);
 
-
-cd 'ExperimentalCode';
 res = rxnDependenceTest(ltModel, a(30), a(100), bloodData, cell_maintenance);
 
 %extract the growth rates
@@ -44,13 +42,32 @@ normf = norm(sel);
 normFrac = normf/-res.baseResN.f;
 hypFrac = hypf/-res.baseResH.f;
 
-sel2 = (normFrac > 0.8) & hypFrac < 0.8;
+%sel2 = (normFrac > 0.8) & hypFrac < 0.8;
+sel2 = normFrac ./ hypFrac > 1.1 & normFrac > 0.5;
 sum(sel2)
-table(ltModel.rxns(ind(sel2)), normFrac(sel2), hypFrac(sel2))
+T = table(ltModel.rxns(ind(sel2)), ...
+          normFrac(sel2), ...
+          hypFrac(sel2), ...
+          constructEquations(ltModel,ltModel.rxns(ind(sel2))))
+T.Properties.VariableNames = {'Rxn','NormEff', 'HypoxEff', 'Equation'};
+T
+writetable(T, 'data/HypoxSensitiveRxns.txt', 'Delimiter', '\t');
 
-%Let's figure out which combinations we need to test:
-sel3 = normFrac < 0.5;
-sel3 = hypFrac < 0.5;
 
-
+%tests
+%#1
+res.baseResH %-0.0165, fits with the -0.01654112 in Fig. 1, so metabolite setup is ok.
+%#2 - Check that all blocked reactions have zero flux, check hyp only, both are done the same way
+checked = false(length(res.hyp),1);
+checked(cellfun(@isempty, res.hyp)) = true;
+for i = 1:length(res.hyp)
+    if ~checked(i)
+        if res.hyp{i}.stat ~= 1
+            checked(i) = true; %infeasible solution, ok
+        else
+            checked(i) = res.hyp{i}.x(i) == 0;
+        end
+    end
+end
+sum(~checked) %0, ok
 

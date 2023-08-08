@@ -34,7 +34,7 @@ filt2 = filt & ~ismember(metabolites, {'O2','NEFA blood pool in','cholesterol','
 x = mw(filt2);
 y = diffCoeff(filt2);
 fit = fitlm(x,y);
-
+fit %show R^2 for the fit, 0.665
 %save to file for plot in R
 
 if showPlot

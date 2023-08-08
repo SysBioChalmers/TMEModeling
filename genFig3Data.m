@@ -193,6 +193,11 @@ m1OnlyLiteratureCollab = blockCollaboration(m1, literatureCollabMets);
 D2_11 = runASimulationFullModel(m1OnlyLiteratureCollab, aFigA, bloodData, cell_maintenance);
 save('data/D2_11.mat', 'D2_11');
 
+literatureCollabMets2 = {'L-lactate','pyruvate','acetone','acetoacetate','(R)-3-hydroxybutanoate','(10Z)-heptadecenoic acid', 'glutamine', 'alanine','H2O2'};
+m1OnlyLiteratureCollab2 = blockCollaboration(m1, literatureCollabMets2);
+D2_11b = runASimulationFullModel(m1OnlyLiteratureCollab2, aFigA, bloodData, cell_maintenance);
+save('data/D2_11b.mat', 'D2_11b');
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % For the blood flow model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
