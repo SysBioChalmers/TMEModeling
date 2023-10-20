@@ -44,10 +44,11 @@ ds = tibble(x=c(aS,rep(aFull,numFluxes-1)),
             y=c(smGrowth, m1Growth, m2Growth, m3Growth, m4Growth, m5Growth), 
             Model = group
 )
-
-pC = ggplot(ds, aes(x = x, y = y, colour = Model, linetype = Model)) +
+lszs = c(1.5,1,1,1,1,1)
+pC = ggplot(ds, aes(x = x, y = y, colour = Model, linetype = Model, size=Model)) +
   geom_line() +
   scale_linetype_manual(values = lst, labels = labels) +
+  scale_size_manual(values = lszs) +
   scale_color_manual(values = cs, labels = labels) +
   labs(y=expression("Growth rate (gDW"^"-1"*"h"^"-1"*")"), x="a", title="Growth rates") +
   theme_bw() + 
@@ -79,7 +80,7 @@ ds = tibble(x=a,
 
 
 pD = ggplot(ds, aes(x = x, y = y)) +
-  geom_line() +
+  geom_line(size=1.3) +
   ggplot2::labs(y=expression("No. collaboration mets"), x="a", title="Collaboration metabolites") +
   ggplot2::theme_bw() + 
   theme(panel.background = element_rect("white", "white", 0, 0, "white"), panel.grid.major= element_blank(),panel.grid.minor= element_blank())
